@@ -1,0 +1,124 @@
+#
+# This is free software, lisence use MIT.
+# 
+# 
+# <https://github.com/kiddin9/openwrt-packages>
+#
+
+name: Merge-upstream
+on:
+  push:
+    paths:
+      - '.github/workflows/upstream.yml'
+      - '.gitignore'
+  schedule:
+    - cron: 0 */6 * * *
+  workflow_dispatch:
+    inputs:
+      ssh:
+        description: 'ssh'
+        required: false
+        default: 'true'
+  watch:
+    types: started
+  repository_dispatch:
+
+jobs:
+  update:
+    strategy:
+      matrix:
+        branch: [lede,openwrt]
+    if: github.event.repository.owner.id == github.event.sender.id || ! github.event.sender.id || github.event.sender.id == '119362912'
+    runs-on: Ubuntu-22.04
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+      with:
+        ref: ${{ matrix.branch }}
+        fetch-depth: 0
+
+    - uses: de-vri-es/setup-git-credentials@v2
+      with:
+        credentials: https://vison-v:${{ secrets.REPO_TOKEN }}@github.com/
+    
+    - name: Set git identity
+      run : |
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+        sudo timedatectl set-timezone "Asia/Shanghai"
+    - name: Syn upstream
+      run: |
+        shopt -s extglob
+        set +e
+        git rm -r --cache * >/dev/null 2>&1 &
+        rm -rf `find ./* -maxdepth 0 -type d` >/dev/null 2>&1
+        function git_clone() {
+          git clone --depth 1 $1 $2
+          if [ "$?" != 0 ]; then
+            echo "error on $1"
+            pid="$( ps -q $$ )"
+            kill $pid
+          fi
+        }
+        function git_sparse_clone() {
+        trap 'rm -rf "$tmpdir"' EXIT
+        branch="$1" curl="$2" && shift 2
+        rootdir="$PWD"
+        tmpdir="$(mktemp -d)" || exit 1
+        if [ ${#branch} -lt 10 ]; then
+        git clone -b "$branch" --depth 1 --filter=blob:none --sparse "$curl" "$tmpdir"
+        cd "$tmpdir"
+        else
+        git clone --filter=blob:none --sparse "$curl" "$tmpdir"
+        cd "$tmpdir"
+        git checkout $branch
+        fi
+        if [ "$?" != 0 ]; then
+            echo "error on $curl"
+            exit 1
+        fi
+        git sparse-checkout init --cone
+        git sparse-checkout set "$@"
+        mv -n $@ $rootdir/ || true
+        cd $rootdir
+        }
+        function mvdir() {
+        mv -n `find $1/* -maxdepth 0 -type d` ./
+        rm -rf $1
+        }
+        [ "${{ matrix.branch }}" == "openwrt" ] && git_sparse_clone master https://github.com/coolsnowwolf/lede package/lean/default-settings
+        (
+        git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./;rm -rf passwall                       ##luci-app-passwall
+        git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./;rm -rf passwall2                  ##luci-app-passwall2
+        git clone https://github.com/fw876/helloworld && rm -rf helloworld/{naiveproxy,chinadns-ng} && mvdir helloworld                               ##luci-app-ssr-plus依赖
+        git_clone https://github.com/xiaorouji/openwrt-passwall-packages && mvdir openwrt-passwall-packages                                           ##luci-app-passwall依赖
+        ) &
+        git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-eqosplus luci-app-unblockneteasemusic luci-app-wechatpush luci-app-lucky luci-app-oaf open-app-filter luci-app-tcpdump  luci-app-wrtbwmon luci-app-watchcat luci-app-smartdns luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl
+        git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-argon-config luci-theme-argon
+        git_sparse_clone main https://github.com/kiddin9/kwrt-packages v2dat smartdns lucky wrtbwmon oaf lua-maxminddb UnblockNeteaseMusic
+        git_sparse_clone master "https://github.com/kiddin9/luci.git" applications/luci-app-ttyd
+    - name: SSH connection to Actions
+      uses: kiddin9/debugger-action@master
+      if: github.event.inputs.ssh == 'true'
+
+    - name: Apply
+      run: |
+        Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
+        git add .
+        git commit -m "${Emoji[$[$RANDOM % ${#Emoji[@]}]]} Sync $(date +%Y-%m-%d" "%H:%M:%S)"
+        for pkg in $(git diff-tree --no-commit-id --name-only HEAD); do
+          if [ "$(grep "PKG_RELEASE" $pkg/Makefile)" ]; then
+            sed -i "s/PKG_RELEASE:=.*/PKG_RELEASE:=$(git rev-list --count ${{ matrix.branch }} $pkg)/" $pkg/Makefile || true
+          fi
+        done
+        git reset --soft HEAD^
+        git add .
+        git commit -m "${Emoji[$[$RANDOM % ${#Emoji[@]}]]} Sync $(date +%Y-%m-%d" "%H:%M:%S)"
+        git push -f
+    - name: Delete workflow runs
+      uses: Mattraks/delete-workflow-runs@main
+      continue-on-error: true
+      with:
+        retain_days: 1
+        keep_minimum_runs: 3
