@@ -96,8 +96,9 @@ jobs:
         ) &
         git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-eqosplus luci-app-unblockneteasemusic luci-app-wechatpush luci-app-lucky luci-app-oaf open-app-filter luci-app-tcpdump  luci-app-wrtbwmon luci-app-watchcat luci-app-smartdns luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl
         git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-argon-config luci-theme-argon
-        git_sparse_clone main https://github.com/kiddin9/kwrt-packages v2dat smartdns lucky wrtbwmon oaf lua-maxminddb UnblockNeteaseMusic
+        git_sparse_clone main https://github.com/kiddin9/kwrt-packages v2dat smartdns wrtbwmon oaf lua-maxminddb UnblockNeteaseMusic
         git_sparse_clone master "https://github.com/kiddin9/luci.git" applications/luci-app-ttyd
+        git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" lucky
     - name: SSH connection to Actions
       uses: kiddin9/debugger-action@master
       if: github.event.inputs.ssh == 'true'
