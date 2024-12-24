@@ -27,7 +27,7 @@ jobs:
   update:
     strategy:
       matrix:
-        branch: [lede,openwrt]
+        branch: [lede,openwrt,immortalwrt]
     if: github.event.repository.owner.id == github.event.sender.id || ! github.event.sender.id || github.event.sender.id == '119362912'
     runs-on: Ubuntu-22.04
 
