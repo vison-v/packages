@@ -1,0 +1,11 @@
+name: Get Sender ID
+on:
+  push:
+    branches:
+      - main
+jobs:
+  get_id:
+    runs-on: ubuntu - latest
+    steps:
+      - name: Echo Sender ID
+        run: echo "Sender ID: ${{ github.event.sender.id }}"
