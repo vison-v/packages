@@ -89,39 +89,18 @@ jobs:
         rm -rf $1
         }
     
-    - name: Syn Branch_lede
-      if: ${{ matrix.branch == lede }}
+    - name: Syn for branch 
       run: |
-        (
+        if [ "${{ matrix.branch }}" == "lede" ]; then  
         git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./;rm -rf passwall                       ##luci-app-passwall
-        git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./;rm -rf passwall2                  ##luci-app-passwall2
+        git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./;rm -rf passwall2   
+        elif [ "${{ matrix.branch }}" == "openwrt" ]; then  
         git clone https://github.com/fw876/helloworld && rm -rf helloworld/{naiveproxy,chinadns-ng} && mvdir helloworld                               ##luci-app-ssr-plus依赖
-        git_clone https://github.com/xiaorouji/openwrt-passwall-packages && mvdir openwrt-passwall-packages                                           ##luci-app-passwall依赖
-        ) &
+        git_clone https://github.com/xiaorouji/openwrt-passwall-packages && mvdir openwrt-passwall-packages
+        elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then
         git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-eqosplus luci-app-unblockneteasemusic luci-app-wechatpush luci-app-lucky luci-app-oaf open-app-filter luci-app-tcpdump  luci-app-wrtbwmon luci-app-watchcat luci-app-smartdns luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl
         git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-argon-config luci-theme-argon
-        git_sparse_clone main https://github.com/kiddin9/kwrt-packages v2dat smartdns wrtbwmon oaf lua-maxminddb UnblockNeteaseMusic
-        git_sparse_clone master "https://github.com/kiddin9/luci.git" applications/luci-app-ttyd
-        git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" lucky
-    
-    - name: Syn Branch_openwrt
-      if: ${{ matrix.branch == openwrt }}
-      run: |
-        git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-eqosplus luci-app-unblockneteasemusic luci-app-wechatpush luci-app-lucky luci-app-oaf open-app-filter luci-app-tcpdump  luci-app-wrtbwmon luci-app-watchcat luci-app-smartdns luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl
-        git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-argon-config luci-theme-argon
-        git_sparse_clone main https://github.com/kiddin9/kwrt-packages v2dat smartdns wrtbwmon oaf lua-maxminddb UnblockNeteaseMusic
-        git_sparse_clone master "https://github.com/kiddin9/luci.git" applications/luci-app-ttyd
-        git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" lucky
-    
-    - name: Syn Branch_immortalwrt
-      if: ${{ matrix.branch == immortalwrt }}
-      run: |
-        (
-        git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./;rm -rf passwall                       ##luci-app-passwall
-        git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./;rm -rf passwall2                  ##luci-app-passwall2
-        git clone https://github.com/fw876/helloworld && rm -rf helloworld/{naiveproxy,chinadns-ng} && mvdir helloworld                               ##luci-app-ssr-plus依赖
-        git_clone https://github.com/xiaorouji/openwrt-passwall-packages && mvdir openwrt-passwall-packages                                           ##luci-app-passwall依赖
-        )
+        fi
     
     - name: SSH connection to Actions
       uses: kiddin9/debugger-action@master
