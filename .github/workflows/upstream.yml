@@ -47,6 +47,7 @@ jobs:
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
         sudo timedatectl set-timezone "Asia/Shanghai"
+    
     - name: Syn upstream
       run: |
         shopt -s extglob
@@ -87,7 +88,10 @@ jobs:
         mv -n `find $1/* -maxdepth 0 -type d` ./
         rm -rf $1
         }
-        [ "${{ matrix.branch }}" == "openwrt" ] && git_sparse_clone master https://github.com/coolsnowwolf/lede package/lean/default-settings
+    
+    - name: Syn Branch_lede
+      if: github.ref =='refs/heads/lede'
+      run: |
         (
         git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./;rm -rf passwall                       ##luci-app-passwall
         git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./;rm -rf passwall2                  ##luci-app-passwall2
@@ -99,6 +103,26 @@ jobs:
         git_sparse_clone main https://github.com/kiddin9/kwrt-packages v2dat smartdns wrtbwmon oaf lua-maxminddb UnblockNeteaseMusic
         git_sparse_clone master "https://github.com/kiddin9/luci.git" applications/luci-app-ttyd
         git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" lucky
+    
+    - name: Syn Branch_openwrt
+      if: github.ref =='refs/heads/openwrt'
+      run: |
+        git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-eqosplus luci-app-unblockneteasemusic luci-app-wechatpush luci-app-lucky luci-app-oaf open-app-filter luci-app-tcpdump  luci-app-wrtbwmon luci-app-watchcat luci-app-smartdns luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl
+        git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-argon-config luci-theme-argon
+        git_sparse_clone main https://github.com/kiddin9/kwrt-packages v2dat smartdns wrtbwmon oaf lua-maxminddb UnblockNeteaseMusic
+        git_sparse_clone master "https://github.com/kiddin9/luci.git" applications/luci-app-ttyd
+        git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" lucky
+    
+    - name: Syn Branch_immortalwrt
+      if: github.ref =='refs/heads/immortalwrt'
+      run: |
+        (
+        git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./;rm -rf passwall                       ##luci-app-passwall
+        git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./;rm -rf passwall2                  ##luci-app-passwall2
+        git clone https://github.com/fw876/helloworld && rm -rf helloworld/{naiveproxy,chinadns-ng} && mvdir helloworld                               ##luci-app-ssr-plus依赖
+        git_clone https://github.com/xiaorouji/openwrt-passwall-packages && mvdir openwrt-passwall-packages                                           ##luci-app-passwall依赖
+        )
+    
     - name: SSH connection to Actions
       uses: kiddin9/debugger-action@master
       if: github.event.inputs.ssh == 'true'
@@ -117,6 +141,7 @@ jobs:
         git add .
         git commit -m "${Emoji[$[$RANDOM % ${#Emoji[@]}]]} Sync $(date +%Y-%m-%d" "%H:%M:%S)"
         git push -f
+    
     - name: Delete workflow runs
       uses: Mattraks/delete-workflow-runs@main
       continue-on-error: true
