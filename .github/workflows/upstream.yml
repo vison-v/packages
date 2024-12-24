@@ -27,7 +27,7 @@ jobs:
   update:
     strategy:
       matrix:
-        branch: [lede,openwrt]
+        branch: [lede,openwrt,immortalwr]
     if: github.event.repository.owner.id == github.event.sender.id || ! github.event.sender.id || github.event.sender.id == '119362912'
     runs-on: Ubuntu-22.04
 
@@ -122,7 +122,8 @@ jobs:
         git clone https://github.com/fw876/helloworld && rm -rf helloworld/{naiveproxy,chinadns-ng} && mvdir helloworld                               ##luci-app-ssr-plus依赖
         git_clone https://github.com/xiaorouji/openwrt-passwall-packages && mvdir openwrt-passwall-packages                                           ##luci-app-passwall依赖
         )
-    
+    - name: Debug github.ref
+      run: echo ${{ github.ref }}
     - name: SSH connection to Actions
       uses: kiddin9/debugger-action@master
       if: github.event.inputs.ssh == 'true'
