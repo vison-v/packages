@@ -88,9 +88,7 @@ jobs:
         mv -n `find $1/* -maxdepth 0 -type d` ./
         rm -rf $1
         }
-    
-    - name: Syn for branch 
-      run: |
+        
         if [ "${{ matrix.branch }}" == "lede" ]; then  
         git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./;rm -rf passwall                       ##luci-app-passwall
         git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./;rm -rf passwall2   
