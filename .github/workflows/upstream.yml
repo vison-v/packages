@@ -90,7 +90,7 @@ jobs:
         }
     
     - name: Syn Branch_lede
-      if: ${{ matrix.branch == "lede" }}
+      if: ${{ matrix.branch == lede }}
       run: |
         (
         git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./;rm -rf passwall                       ##luci-app-passwall
@@ -105,7 +105,7 @@ jobs:
         git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" lucky
     
     - name: Syn Branch_openwrt
-      if: ${{ matrix.branch == "openwrt" }}
+      if: ${{ matrix.branch == openwrt }}
       run: |
         git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-eqosplus luci-app-unblockneteasemusic luci-app-wechatpush luci-app-lucky luci-app-oaf open-app-filter luci-app-tcpdump  luci-app-wrtbwmon luci-app-watchcat luci-app-smartdns luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl
         git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-argon-config luci-theme-argon
@@ -114,7 +114,7 @@ jobs:
         git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" lucky
     
     - name: Syn Branch_immortalwrt
-      if: ${{ matrix.branch == "immortalwrt" }}
+      if: ${{ matrix.branch == immortalwrt }}
       run: |
         (
         git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./;rm -rf passwall                       ##luci-app-passwall
