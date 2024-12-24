@@ -1,4 +1,4 @@
-name: Get Sender ID
+name: Get Sender ID in Script
 on:
   push:
     branches:
@@ -7,5 +7,8 @@ jobs:
   get_id:
     runs-on: ubuntu - latest
     steps:
-      - name: Echo Sender ID
-        run: echo "Sender ID: ${{ github.event.sender.id }}"
+      - name: Set and Use Sender ID in Script
+        run: |
+          sender_id=${{ github.event.sender.id }}
+          echo "The sender ID is: $sender_id"
+          # 这里可以继续使用 $sender_id 进行其他操作
