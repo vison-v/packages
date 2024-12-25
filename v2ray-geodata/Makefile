@@ -5,29 +5,38 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2ray-geodata
-PKG_RELEASE:=4
+PKG_RELEASE:=5
 
 PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
 include $(INCLUDE_DIR)/package.mk
 
-GEOIP_VER:=202412050058
+GEOIP_VER:=202412201411
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 define Download/geoip
   URL:=https://github.com/v2fly/geoip/releases/download/$(GEOIP_VER)/
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=62f13f734ec2e9a2038fef4fb904aa7b7d6eeab2e315388ccc239c0476d503c1
+  HASH:=3f72cea0044a747fcb28cce36f70946c9e664c55949046fd22679090edc264b9
 endef
 
-GEOSITE_VER:=20241112092643
+GEOSITE_VER:=20241221105938
 GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 define Download/geosite
   URL:=https://github.com/v2fly/domain-list-community/releases/download/$(GEOSITE_VER)/
   URL_FILE:=dlc.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=f04433837b88a3f49d7cd6517c91e8f5de4e4496f3d88ef3b7c6be5bb63f4c6f
+  HASH:=aa65cee72dd6afbf9dd4c474b4ff28ceb063f6abf99249a084091adb4f282f09
+endef
+
+GEOSITE_IRAN_VER:=202412230035
+GEOSITE_IRAN_FILE:=iran.dat.$(GEOSITE_IRAN_VER)
+define Download/geosite-ir
+  URL:=https://github.com/bootmortis/iran-hosted-domains/releases/download/$(GEOSITE_IRAN_VER)/
+  URL_FILE:=iran.dat
+  FILE:=$(GEOSITE_IRAN_FILE)
+  HASH:=fcf072abdad21399b442ff5474a60802efb264bfc8aa3f90048c343fd296dc89
 endef
 
 define Package/v2ray-geodata/template
@@ -41,14 +50,22 @@ endef
 define Package/v2ray-geoip
   $(call Package/v2ray-geodata/template)
   TITLE:=GeoIP List for V2Ray
-  VERSION:=$(GEOIP_VER).$(PKG_RELEASE)
+  VERSION:=$(GEOIP_VER)-$(PKG_RELEASE)
   LICENSE:=CC-BY-SA-4.0
 endef
 
 define Package/v2ray-geosite
   $(call Package/v2ray-geodata/template)
   TITLE:=Geosite List for V2Ray
-  VERSION:=$(GEOSITE_VER).$(PKG_RELEASE)
+  VERSION:=$(GEOSITE_VER)-$(PKG_RELEASE)
+  LICENSE:=MIT
+endef
+
+define Package/v2ray-geosite-ir
+  $(call Package/v2ray-geodata/template)
+  TITLE:=Iran Geosite List for V2Ray
+  PROVIDES:=xray-geosite-ir
+  VERSION:=$(GEOSITE_IRAN_VER)-$(PKG_RELEASE)
   LICENSE:=MIT
 endef
 
@@ -59,6 +76,9 @@ ifneq ($(CONFIG_PACKAGE_v2ray-geoip),)
 endif
 ifneq ($(CONFIG_PACKAGE_v2ray-geosite),)
 	$(call Download,geosite)
+endif
+ifneq ($(CONFIG_PACKAGE_v2ray-geosite-ir),)
+	$(call Download,geosite-ir)
 endif
 endef
 
@@ -75,5 +95,12 @@ define Package/v2ray-geosite/install
 	$(INSTALL_DATA) $(DL_DIR)/$(GEOSITE_FILE) $(1)/usr/share/v2ray/geosite.dat
 endef
 
+define Package/v2ray-geosite-ir/install
+	$(INSTALL_DIR) $(1)/usr/share/v2ray $(1)/usr/share/xray
+	$(INSTALL_DATA) $(DL_DIR)/$(GEOSITE_IRAN_FILE) $(1)/usr/share/v2ray/iran.dat
+	$(LN) ../v2ray/iran.dat $(1)/usr/share/xray/iran.dat
+endef
+
 $(eval $(call BuildPackage,v2ray-geoip))
 $(eval $(call BuildPackage,v2ray-geosite))
+$(eval $(call BuildPackage,v2ray-geosite-ir))
