@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=chinadns-ng
 PKG_VERSION:=2024.12.22
-PKG_RELEASE:=6
+PKG_RELEASE:=7
 
 ifeq ($(ARCH),aarch64)
   ifeq ($(BOARD),rockchip)
