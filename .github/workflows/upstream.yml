@@ -110,7 +110,8 @@ jobs:
         git_sparse_clone master https://github.com/immortalwrt/immortalwrt package/emortal/default-settings
         git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush luci-app-smartdns \
         luci-app-zerotier luci-app-unblockneteasemusic luci-theme-argon luci-app-argon-config luci-app-watchcat \
-        UnblockNeteaseMusic-Go UnblockNeteaseMusic \
+        luci-app-autoreboot luci-app-usb-printer luci-app-vlmcsd luci-app-socat luci-app-arpbind luci-app-cifs-mount \
+        vlmcsd UnblockNeteaseMusic-Go UnblockNeteaseMusic \
         
         #更新immortalwrt分支
         elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then
