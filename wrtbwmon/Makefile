@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=wrtbwmon
 PKG_VERSION:=1.2.1
-PKG_RELEASE:=6
+PKG_RELEASE:=7
 
 include $(INCLUDE_DIR)/package.mk
 
