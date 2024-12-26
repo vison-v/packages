@@ -96,7 +96,7 @@ jobs:
         git_clone https://github.com/xiaorouji/openwrt-passwall-packages && mvdir openwrt-passwall-packages                                           ##luci-app-passwall依赖
         
         git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-eqosplus \
-        luci-app-oaf open-app-filter oaf luci-app-tcpdump  luci-app-wrtbwmon \
+        luci-app-oaf open-app-filter oaf luci-app-tcpdump  luci-app-wrtbwmon wrtbwmon \
         luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl \
         
         git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" luci-app-lucky lucky
@@ -110,6 +110,7 @@ jobs:
         git_sparse_clone master https://github.com/coolsnowwolf/lede package/lean/default-settings
         git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush luci-app-smartdns \
         luci-app-zerotier luci-app-unblockneteasemusic luci-theme-argon luci-app-argon-config \
+        UnblockNeteaseMusic-Go UnblockNeteaseMusic \
         
         #更新immortalwrt分支
         elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then
