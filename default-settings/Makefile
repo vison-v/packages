@@ -6,7 +6,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=default-settings
-PKG_RELEASE:=26
+PKG_RELEASE:=27
 
 PKG_LICENSE:=GPL-2.0-only
 
