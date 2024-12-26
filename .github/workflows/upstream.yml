@@ -95,27 +95,25 @@ jobs:
         git clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small                              ##翻越长城app及依赖
         git_clone https://github.com/xiaorouji/openwrt-passwall-packages && mvdir openwrt-passwall-packages                                           ##luci-app-passwall依赖
         
-        git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-eqosplus luci-app-unblockneteasemusic \
-        luci-app-wechatpush luci-app-oaf open-app-filter luci-app-tcpdump  luci-app-wrtbwmon luci-app-watchcat \
-        luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl luci-app-argon-config \
-        luci-theme-argon
-        
-        git_sparse_clone main https://github.com/kiddin9/kwrt-packages wrtbwmon oaf UnblockNeteaseMusic \
-        watchcat
+        git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-eqosplus \
+        luci-app-oaf open-app-filter oaf luci-app-tcpdump  luci-app-wrtbwmon \
+        luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl \
         
         git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" luci-app-lucky lucky
         
         #更新lede分支
         if [ "${{ matrix.branch }}" == "lede" ]; then  
-        git_sparse_clone master "https://github.com/kiddin9/luci.git" applications/luci-app-ttyd
+        git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-eqosplus luci-app-wechatpush \
+        luci-theme-argon luci-app-argon-config \
         
         #更新openwrt分支
         elif [ "${{ matrix.branch }}" == "openwrt" ]; then  
         git_sparse_clone master https://github.com/coolsnowwolf/lede package/lean/default-settings
-        git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-zerotier luci-app-smartdns smartdns
+        git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-eqosplus luci-app-smartdns \
+        luci-app-wechatpush luci-theme-argon luci-app-argon-config \
+        
         #更新immortalwrt分支
         elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then
-        git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" lucky                                                                        ##lucky大吉
         fi
     
     - name: SSH connection to Actions
