@@ -109,7 +109,7 @@ jobs:
         elif [ "${{ matrix.branch }}" == "openwrt" ]; then  
         git_sparse_clone master https://github.com/coolsnowwolf/lede package/lean/default-settings
         git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush luci-app-smartdns \
-        luci-app-zerotier luci-app-unblockneteasemusic luci-theme-argon luci-app-argon-config \
+        luci-app-zerotier luci-app-unblockneteasemusic luci-theme-argon luci-app-argon-config luci-app-watchcat \
         UnblockNeteaseMusic-Go UnblockNeteaseMusic \
         
         #更新immortalwrt分支
