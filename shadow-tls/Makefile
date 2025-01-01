@@ -5,7 +5,7 @@ include $(INCLUDE_DIR)/package.mk
 
 PKG_NAME:=shadow-tls
 PKG_VERSION:=0.2.25
-PKG_RELEASE:=21
+PKG_RELEASE:=22
 
 RELEASE_HEAD:=$(PKG_NAME)
 RELEASE_FOOT:=unknown-linux-musl
