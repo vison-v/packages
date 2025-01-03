@@ -99,7 +99,7 @@ jobs:
         #更新lede分支
         if [ "${{ matrix.branch }}" == "lede" ]; then  
         git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush luci-theme-argon luci-app-argon-config \
-        git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-quickstart luci-app-eqosplus \
+        git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-quickstart quickstart luci-app-eqosplus \
         luci-app-oaf open-app-filter oaf  luci-app-wrtbwmon wrtbwmon \
         luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl \
         
