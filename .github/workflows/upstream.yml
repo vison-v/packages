@@ -21,7 +21,6 @@ on:
         default: 'true'
   watch:
     types: started
-  repository_dispatch:
 
 jobs:
   update:
