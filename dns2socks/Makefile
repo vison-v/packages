@@ -6,7 +6,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dns2socks
 PKG_VERSION:=2.1
-PKG_RELEASE:=61
+PKG_RELEASE:=62
 
 PKG_SOURCE:=SourceCode.zip
 PKG_SOURCE_URL:=@SF/dns2socks
