@@ -127,14 +127,14 @@ jobs:
           echo "暂无"
         fi
         ######################################################################################################################################
-        for e in $(ls -d ./luci-app-*/po); do  
-          po_dir=$e  
-          if [[ -d "$po_dir/zh-cn" && ! -d "$po_dir/zh_Hans" ]]; then  
-             ln -s zh-cn "$po_dir/zh_Hans" 2>/dev/null  
-           elif [[ -d "$po_dir/zh_Hans" && ! -d "$po_dir/zh-cn" ]]; then  
-             ln -s zh_Hans "$po_dir/zh-cn" 2>/dev/null  
-           fi  
-        done  
+        #for e in $(ls -d ./luci-app-*/po); do  
+         # po_dir=$e  
+          #if [[ -d "$po_dir/zh-cn" && ! -d "$po_dir/zh_Hans" ]]; then  
+           #  ln -s zh-cn "$po_dir/zh_Hans" 2>/dev/null  
+           #elif [[ -d "$po_dir/zh_Hans" && ! -d "$po_dir/zh-cn" ]]; then  
+            # ln -s zh_Hans "$po_dir/zh-cn" 2>/dev/null  
+          # fi  
+       # done  
         
     - name: Apply
       run: |
