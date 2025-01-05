@@ -39,7 +39,7 @@ jobs:
           if [ -f "upgrade.sh" ]; then
             chmod +x ./upgrade.sh && ./upgrade.sh ${{ matrix.branch }}
           else
-            curl -skL https://raw.githubusercontent.com/wjz304/openwrt-packages/main/upgrade.sh | bash -s ${{ matrix.branch }}
+            curl -skL https://raw.githubusercontent.com/vison-v/packages/main/upgrade.sh | bash -s ${{ matrix.branch }}
           fi
 
       - name: Check for changes
