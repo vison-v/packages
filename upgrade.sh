@@ -15,19 +15,17 @@
 BRANCH=${1:-openwrt}
 
 function _lang() {  
-  if [ "$1" == "to_zh_Hans" ]; then  
-    for I in $(find $2 -name "zh-cn"); do  
-      [ ! -d "${I}" ] && continue  
-      [ -d "${I/zh-cn/zh_Hans}" ] && continue  
-      cp -rf "${I}" "${I/zh-cn/zh_Hans}"  
-    done  
-  else  
-    for I in $(find $2 -name "zh_Hans"); do  
-      [ ! -d "${I}" ] && continue  
-      [ -d "${I/zh_Hans/zh-cn}" ] && continue  
-      cp -rf "${I}" "${I/zh_Hans/zh-cn}"  
-    done  
-  fi  
+  for I in $(find "$1" -name "zh-cn"); do  
+    [ ! -d "${I}" ] && continue  
+    [ -d "${I/zh-cn/zh_Hans}" ] && continue  
+    cp -rf "${I}" "${I/zh-cn/zh_Hans}"  
+  done  
+
+  for I in $(find "$1" -name "zh_Hans"); do  
+    [ ! -d "${I}" ] && continue  
+    [ -d "${I/zh_Hans/zh-cn}" ] && continue  
+    cp -rf "${I}" "${I/zh_Hans/zh-cn}"  
+  done  
 }
 
 function git_clone() {
