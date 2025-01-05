@@ -1,6 +1,6 @@
 #  
 # This is free software, license use MIT.  
-#   
+#  
 # <https://github.com/kiddin9/openwrt-packages>  
 #  
 
@@ -61,19 +61,19 @@ jobs:
             rootdir="$PWD"  
             tmpdir="$(mktemp -d)" || exit 1  
             git clone --filter=blob:none --sparse "$curl" "$tmpdir"  
-            cd "$tmpdir"  
+            cd "$tmpdir" || exit  
             git checkout "$branch"  
             git sparse-checkout init --cone  
             git sparse-checkout set "$@"  
             mv -n "$@" "$rootdir/" || true  
-            cd "$rootdir"  
+            cd "$rootdir" || exit  
             rm -rf "$tmpdir"  
           }  
 
-          function mvdir() {
-            mv -n `find $1/* -maxdepth 0 -type d` ./
-            rm -rf $1
-          }
+          function mvdir() {  
+            mv -n $(find "$1"/* -maxdepth 0 -type d) ./  
+            rm -rf "$1"  
+          }  
           
           # Clone necessary repositories  
           git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./ && rm -rf passwall  
@@ -90,6 +90,14 @@ jobs:
           elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then  
             echo "No updates available for immortalwrt"  
           fi  
+
+          for e in $(ls -d ./luci-app-*/po); do  
+            if [[ -d $e/zh-cn && ! -d $e/zh_Hans ]]; then  
+              ln -s zh-cn "$e/zh_Hans" 2>/dev/null  
+            elif [[ -d $e/zh_Hans && ! -d $e/zh-cn ]]; then  
+              ln -s zh_Hans "$e/zh-cn" 2>/dev/null  
+            fi  
+          done  
 
       - name: Apply changes  
         run: |  
