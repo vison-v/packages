@@ -85,7 +85,7 @@ jobs:
         mv -n `find $1/* -maxdepth 0 -type d` ./
         rm -rf $1
         }
-        ##################################################################################################################################
+        ###################################################################################################################################
         git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./;rm -rf passwall                       ##luci-app-passwall
         git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./;rm -rf passwall2                  ##luci-app-passwall2
         git clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small                              ##翻越长城app及依赖
@@ -113,6 +113,15 @@ jobs:
         elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then
         echo "暂无"
         fi
+
+          for e in $(ls -d ./luci-app-*/po); do  
+            po_dir=$e  
+            if [[ -d "$po_dir/zh-cn" && ! -d "$po_dir/zh_Hans" ]]; then  
+              ln -s zh-cn "$po_dir/zh_Hans" 2>/dev/null  
+            elif [[ -d "$po_dir/zh_Hans" && ! -d "$po_dir/zh-cn" ]]; then  
+              ln -s zh_Hans "$po_dir/zh-cn" 2>/dev/null  
+            fi  
+          done  
 
     - name: Apply
       run: |
