@@ -14,30 +14,20 @@
 
 BRANCH=${1:-openwrt}
 
-function _lang() {
-  if [ "${BRANCH}" == "openwrt" ]; then
-    for I in $(find $1 -name "zh-cn"); do
-      [ ! -d "${I}" ] && continue
-      [ -d "${I/zh-cn/zh_Hans}" ] && continue
-      cp -rf "${I}" "${I/zh-cn/zh_Hans}"
-    done
-    for I in $(find $1 -name "zh-tw"); do
-      [ ! -d "${I}" ] && continue
-      [ -d "${I/zh-tw/zh_Hant}" ] && continue
-      cp -rf "${I}" "${I/zh-tw/zh_Hant}"
-    done
-  else
-    for I in $(find $1 -name "zh_Hans"); do
-      [ ! -d "${I}" ] && continue
-      [ -d "${I/zh_Hans/zh-cn}" ] && continue
-      cp -rf "${I}" "${I/zh_Hans/zh-cn}"
-    done
-    for I in $(find $1 -name "zh_Hant"); do
-      [ ! -d "${I}" ] && continue
-      [ -d "${I/zh_Hant/zh-tw}" ] && continue
-      cp -rf "${I}" "${I/zh_Hant/zh-tw}"
-    done
-  fi
+function _lang() {  
+  if [ "$1" == "to_zh_Hans" ]; then  
+    for I in $(find $2 -name "zh-cn"); do  
+      [ ! -d "${I}" ] && continue  
+      [ -d "${I/zh-cn/zh_Hans}" ] && continue  
+      cp -rf "${I}" "${I/zh-cn/zh_Hans}"  
+    done  
+  else  
+    for I in $(find $2 -name "zh_Hans"); do  
+      [ ! -d "${I}" ] && continue  
+      [ -d "${I/zh_Hans/zh-cn}" ] && continue  
+      cp -rf "${I}" "${I/zh_Hans/zh-cn}"  
+    done  
+  fi  
 }
 
 function git_clone() {
