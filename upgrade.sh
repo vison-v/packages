@@ -20,7 +20,6 @@ function _lang() {
     [ -d "${I/zh-cn/zh_Hans}" ] && continue  
     cp -rf "${I}" "${I/zh-cn/zh_Hans}"  
   done  
-
   for I in $(find "$1" -name "zh_Hans"); do  
     [ ! -d "${I}" ] && continue  
     [ -d "${I/zh_Hans/zh-cn}" ] && continue  
@@ -28,28 +27,42 @@ function _lang() {
   done  
 }
 
-function git_clone() {
-  rm -rf $(basename $1 .git)
-  branch=""
-  [ ! -z "$2" ] && branch="-b $2"
-  git clone --depth 1 ${branch} $1 $(basename $1 .git) || true
-  # sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' $(basename $1 .git)/Makefile
-  rm -rf $(basename $1 .git)/.svn* $(basename $1 .git)/.git*
-  _lang $(basename $1 .git)
+function git_clone() {  
+    git clone --depth 1 "$1" "$2"  
+    if [ "$?" != 0 ]; then  
+        echo "error on $1"  
+        pid="$(ps -q $$)"  
+        kill "$pid"  
+    fi  
+    find "$2" -name '.svn' -o -name '.git' | xargs rm -rf  
+  _lang $2
 }
 
 function git_co() {
-  rm -rf ${1//*\/}
-  rm -rf /tmp/git_co
-  branch=""
-  [ ! -z "$3" ] && branch="-b $3"
-  git clone --depth 1 ${branch} $2 /tmp/git_co || true
-  mkdir -p ${1//*\/}
-  cp -rf /tmp/git_co/$1/* ${1//*\/}
-  rm -rf /tmp/git_co
-  # sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' $(basename $1 .git)/Makefile
-  rm -rf ${1//*\/}/.svn* ${1//*\/}/.git*
-  _lang ${1//*\/}
+    trap 'rm -rf "$tmpdir"' EXIT  
+    branch="$1"  
+    curl="$2"  
+    shift 2  
+    rootdir="$PWD"  
+    tmpdir="$(mktemp -d)" || exit 1  
+    if [ ${#branch} -lt 10 ]; then  
+        git clone -b "$branch" --depth 1 --filter=blob:none --sparse "$curl" "$tmpdir"  
+        cd "$tmpdir"  
+    else  
+        git clone --filter=blob:none --sparse "$curl" "$tmpdir"  
+        cd "$tmpdir"  
+        git checkout "$branch"  
+    fi  
+    if [ "$?" != 0 ]; then  
+        echo "error on $curl"  
+        exit 1  
+    fi  
+    find "$tmpdir" -name '.svn' -o -name '.git' | xargs rm -rf  
+    git sparse-checkout init --cone  
+    git sparse-checkout set "$@"  
+    mv -n "$@" "$rootdir/" || true  
+    cd "$rootdir"  
+	_lang $@
 }
 
 function svn_co() {
