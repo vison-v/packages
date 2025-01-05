@@ -1,111 +1,130 @@
-#  
-# This is free software, license use MIT.  
-#  
-# <https://github.com/kiddin9/openwrt-packages>  
-#  
+#
+# This is free software, lisence use MIT.
+# 
+# 
+# <https://github.com/kiddin9/openwrt-packages>
+#
 
-name: Merge-upstream  
+name: Merge-upstream
+on:
+  push:
+    paths:
+      - '.github/workflows/upstream.yml'
+      - '.gitignore'
+  schedule:
+    - cron: 0 */6 * * *
+  workflow_dispatch:
+  watch:
+    types: started
 
-on:  
-  push:  
-    paths:  
-      - '.github/workflows/upstream.yml'  
-      - '.gitignore'  
-  schedule:  
-    - cron: '0 */6 * * *'  
-  workflow_dispatch:  
-  watch:  
-    types: started  
+jobs:
+  update:
+    strategy:
+      matrix:
+        branch: [lede,openwrt,immortalwrt]
+    if: github.event.repository.owner.id == github.event.sender.id || ! github.event.sender.id || github.event.sender.id == 71822883
+    runs-on: Ubuntu-22.04
 
-jobs:  
-  update:  
-    strategy:  
-      matrix:  
-        branch: [lede, openwrt, immortalwrt]  
-    runs-on: ubuntu-22.04  
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+      with:
+        ref: ${{ matrix.branch }}
+        fetch-depth: 0
 
-    steps:  
-      - name: Checkout  
-        uses: actions/checkout@v2  
-        with:  
-          ref: ${{ matrix.branch }}  
-          fetch-depth: 0  
+    - uses: de-vri-es/setup-git-credentials@v2
+      with:
+        credentials: https://vison-v:${{ secrets.REPO_TOKEN }}@github.com/
+    
+    - name: Set git identity
+      run : |
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+        sudo timedatectl set-timezone "Asia/Shanghai"
+    
+    - name: Syn upstream
+      run: |
+        shopt -s extglob
+        set +e
+        git rm -r --cache * >/dev/null 2>&1 &
+        rm -rf `find ./* -maxdepth 0 -type d` >/dev/null 2>&1
+        
+        function git_clone() {
+          git clone --depth 1 $1 $2
+          if [ "$?" != 0 ]; then
+            echo "error on $1"
+            pid="$( ps -q $$ )"
+            kill $pid
+          fi
+        }
+        
+        function git_sparse_clone() {
+        trap 'rm -rf "$tmpdir"' EXIT
+        branch="$1" curl="$2" && shift 2
+        rootdir="$PWD"
+        tmpdir="$(mktemp -d)" || exit 1
+        if [ ${#branch} -lt 10 ]; then
+        git clone -b "$branch" --depth 1 --filter=blob:none --sparse "$curl" "$tmpdir"
+        cd "$tmpdir"
+        else
+        git clone --filter=blob:none --sparse "$curl" "$tmpdir"
+        cd "$tmpdir"
+        git checkout $branch
+        fi
+        if [ "$?" != 0 ]; then
+            echo "error on $curl"
+            exit 1
+        fi
+        git sparse-checkout init --cone
+        git sparse-checkout set "$@"
+        mv -n $@ $rootdir/ || true
+        cd $rootdir
+        }
+        
+        function mvdir() {
+        mv -n `find $1/* -maxdepth 0 -type d` ./
+        rm -rf $1
+        }
+        ##################################################################################################################################
+        git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./;rm -rf passwall                       ##luci-app-passwall
+        git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./;rm -rf passwall2                  ##luci-app-passwall2
+        git clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small                              ##翻越长城app及依赖
+        
+        git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" luci-app-lucky lucky
+        ####################################################################################################################################
+        #更新lede分支
+        if [ "${{ matrix.branch }}" == "lede" ]; then  
+        git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush luci-theme-argon luci-app-argon-config \
+        git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-quickstart quickstart luci-app-eqosplus \
+        luci-app-oaf open-app-filter oaf  luci-app-wrtbwmon wrtbwmon \
+        luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl \
+        
+        #更新openwrt分支
+        elif [ "${{ matrix.branch }}" == "openwrt" ]; then  
+        git_sparse_clone master https://github.com/immortalwrt/immortalwrt package/emortal/default-settings
+        #git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush \
+        #luci-app-zerotier luci-app-unblockneteasemusic luci-theme-argon luci-app-argon-config luci-app-watchcat \
+        #luci-app-autoreboot luci-app-usb-printer luci-app-vlmcsd luci-app-socat luci-app-arpbind luci-app-cifs-mount \
+        #vlmcsd UnblockNeteaseMusic-Go UnblockNeteaseMusic \
+        #git_sparse_clone master https://github.com/immortalwrt/luci applications/luci-app-smartdns
+        #git_sparse_clone master https://github.com/immortalwrt/packages net/smartdns
+        
+        #更新immortalwrt分支
+        elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then
+        echo "暂无"
+        fi
 
-      - uses: de-vri-es/setup-git-credentials@v2  
-        with:  
-          credentials: https://vison-v:${{ secrets.REPO_TOKEN }}@github.com/  
-
-      - name: Set git identity  
-        run: |  
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"  
-          git config --global user.name "github-actions[bot]"  
-          sudo timedatectl set-timezone "Asia/Shanghai"  
-
-      - name: Sync upstream  
-        run: |  
-          set +e  
-          rm -rf ./* >/dev/null 2>&1  
-
-          function git_clone() {  
-            git clone --depth 1 "$1" "$2"  
-            if [ "$?" != 0 ]; then  
-              echo "Error cloning $1"  
-              exit 1  
-            fi  
-          }  
-
-          function git_sparse_clone() {  
-            branch="$1"  
-            curl="$2"  
-            shift 2  
-            rootdir="$PWD"  
-            tmpdir="$(mktemp -d)" || exit 1  
-            git clone --filter=blob:none --sparse "$curl" "$tmpdir"  
-            cd "$tmpdir" || exit  
-            git checkout "$branch"  
-            git sparse-checkout init --cone  
-            git sparse-checkout set "$@"  
-            mv -n "$@" "$rootdir/" || true  
-            cd "$rootdir" || exit  
-            rm -rf "$tmpdir"  
-          }  
-
-          function mvdir() {  
-            mv -n $(find "$1"/* -maxdepth 0 -type d) ./  
-            rm -rf "$1"  
-          }  
-          
-          # Clone necessary repositories  
-          git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./ && rm -rf passwall  
-          git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./ && rm -rf passwall2  
-          git clone https://github.com/kenzok8/small small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small  
-          git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" luci-app-lucky lucky  
-
-          # Branch specific updates  
-          if [ "${{ matrix.branch }}" == "lede" ]; then  
-            git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush luci-theme-argon luci-app-argon-config \
-            git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-quickstart quickstart luci-app-eqosplus \
-              luci-app-oaf open-app-filter oaf  luci-app-wrtbwmon wrtbwmon \
-              luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl \
-          
-          elif [ "${{ matrix.branch }}" == "openwrt" ]; then  
-            git_sparse_clone master https://github.com/immortalwrt/immortalwrt package/emortal/default-settings  
-          
-          elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then  
-            echo "No updates available for immortalwrt"  
-          fi  
-     
-      - name: Apply changes  
-        run: |  
-          Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")  
-          git add .  
-          git commit -m "${Emoji[$RANDOM % ${#Emoji[@]}]} Sync $(date +'%Y-%m-%d %H:%M:%S')"  
-          git push -f  
-
-
-      - name: Delete old workflow runs  
-        uses: Mattraks/delete-workflow-runs@main  
-        continue-on-error: true  
-        with:  
-          retain_days: 1  
-          keep_minimum_runs: 3
+    - name: Apply
+      run: |
+        Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
+        git add .
+        git commit -m "${Emoji[$[$RANDOM % ${#Emoji[@]}]]} Sync $(date +%Y-%m-%d" "%H:%M:%S)"
+        git reset --soft HEAD^
+        git push -f
+    
+    - name: Delete workflow runs
+      uses: Mattraks/delete-workflow-runs@main
+      continue-on-error: true
+      with:
+        retain_days: 1
+        keep_minimum_runs: 3
