@@ -79,7 +79,6 @@ jobs:
           git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./ && rm -rf passwall  
           git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./ && rm -rf passwall2  
           git clone https://github.com/kenzok8/small small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small  
-          git_sparse_clone main https://github.com/kiddin9/luci-app-tcpdump luci-app-tcpdump  
           git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" luci-app-lucky lucky  
 
           # Branch specific updates  
@@ -98,7 +97,7 @@ jobs:
 
           for e in $(ls -d ./luci-app-*/po); do  
             po_dir=$e  
-            find "$po_dir" -type d ! -name 'zh-cn' ! -name 'zh_Hans' -exec rm -rf {} +  
+            find "$po_dir" -type d ! -name 'zh-cn' -exec rm -rf {} +  
 
             if [[ -d "$po_dir/zh-cn" && ! -d "$po_dir/zh_Hans" ]]; then  
               ln -s zh-cn "$po_dir/zh_Hans" 2>/dev/null  
