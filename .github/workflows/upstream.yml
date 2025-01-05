@@ -97,7 +97,7 @@ jobs:
 
           for e in $(ls -d ./luci-app-*/po); do  
             po_dir=$e  
-            find "$po_dir" -maxdepth 0 -type d ! -name 'zh-cn' ! -name 'zh_Hans' -exec rm -rf {} +    
+            ls -d "$po_dir"/*/ | grep -v '/zh-cn/' | grep -v '/zh_Hans/' | xargs rm -rf    
 
             if [[ -d "$po_dir/zh-cn" && ! -d "$po_dir/zh_Hans" ]]; then  
               ln -s zh-cn "$po_dir/zh_Hans" 2>/dev/null  
