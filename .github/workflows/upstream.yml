@@ -45,7 +45,7 @@ jobs:
         run: |  
           set +e  
           rm -rf ./* >/dev/null 2>&1  
-          
+
           function git_clone() {  
             git clone --depth 1 "$1" "$2"  
             if [ "$?" != 0 ]; then  
@@ -92,13 +92,15 @@ jobs:
           fi  
 
           for e in $(ls -d ./luci-app-*/po); do  
-            if [[ -d $e/zh-cn && ! -d $e/zh_Hans ]]; then  
-              ln -s zh-cn "$e/zh_Hans" 2>/dev/null  
-            elif [[ -d $e/zh_Hans && ! -d $e/zh-cn ]]; then  
-              ln -s zh_Hans "$e/zh-cn" 2>/dev/null  
+            po_dir=$e  
+            find "$po_dir" -type d ! -name 'zh-cn' ! -name 'zh_Hans' -exec rm -rf {} +  
+
+            if [[ -d "$po_dir/zh-cn" && ! -d "$po_dir/zh_Hans" ]]; then  
+              ln -s zh-cn "$po_dir/zh_Hans" 2>/dev/null  
+            elif [[ -d "$po_dir/zh_Hans" && ! -d "$po_dir/zh-cn" ]]; then  
+              ln -s zh_Hans "$po_dir/zh-cn" 2>/dev/null  
             fi  
           done  
-          find ./luci-app-*/po -type d ! -name 'zh-cn' ! -name 'zh_Hans' -exec rm -rf {} +
 
       - name: Apply changes  
         run: |  
