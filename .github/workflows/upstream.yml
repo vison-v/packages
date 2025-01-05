@@ -97,8 +97,6 @@ jobs:
 
           for e in $(ls -d ./luci-app-*/po); do  
             po_dir=$e  
-            #ls -d "$po_dir"/*/ | grep -v '/zh-cn/' | grep -v '/zh_Hans/' | xargs rm -rf    
-
             if [[ -d "$po_dir/zh-cn" && ! -d "$po_dir/zh_Hans" ]]; then  
               ln -s zh-cn "$po_dir/zh_Hans" 2>/dev/null  
             elif [[ -d "$po_dir/zh_Hans" && ! -d "$po_dir/zh-cn" ]]; then  
@@ -110,8 +108,14 @@ jobs:
         run: |  
           Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")  
           git add .  
-          git commit -m "${Emoji[$RANDOM % ${#Emoji[@]}]} Sync $(date +'%Y-%m-%d %H:%M:%S')"  
-          git push -f  
+          git commit -m "${Emoji[$[$RANDOM % ${#Emoji[@]}]]} Sync $(date +%Y-%m-%d" "%H:%M:%S)"
+          for pkg in $(git diff-tree --no-commit-id --name-only HEAD); do
+          ls -d "$pkg"/po/*/ | grep -v '/zh-cn/' | grep -v '/zh_Hans/' | xargs rm -rf    
+          done
+          git reset --soft HEAD^
+          git add .
+          git commit -m "${Emoji[$[$RANDOM % ${#Emoji[@]}]]} Sync $(date +%Y-%m-%d" "%H:%M:%S)"
+          git push -f
 
       - name: Delete old workflow runs  
         uses: Mattraks/delete-workflow-runs@main  
