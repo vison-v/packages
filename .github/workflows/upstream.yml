@@ -86,34 +86,43 @@ jobs:
         rm -rf $1
         }
         ###################################################################################################################################
-        #git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./;rm -rf passwall                       ##luci-app-passwall
-        #git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./;rm -rf passwall2                  ##luci-app-passwall2
-        #git clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small                              ##翻越长城app及依赖
+        git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./;rm -rf passwall                       ##luci-app-passwall
+        git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./;rm -rf passwall2                  ##luci-app-passwall2
+        git clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small                              ##翻越长城app及依赖
         
         git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" luci-app-lucky lucky
         ####################################################################################################################################
         #更新lede分支
         if [ "${{ matrix.branch }}" == "lede" ]; then  
-        git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush luci-theme-argon luci-app-argon-config \
-        git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-quickstart quickstart luci-app-eqosplus \
-        luci-app-oaf open-app-filter oaf  luci-app-wrtbwmon wrtbwmon \
-        luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl \
+          git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush luci-theme-argon luci-app-argon-config \
+          git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-quickstart quickstart luci-app-eqosplus \
+          luci-app-oaf open-app-filter oaf  luci-app-wrtbwmon wrtbwmon \
+          luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl \
         
         #更新openwrt分支
-        #elif [ "${{ matrix.branch }}" == "openwrt" ]; then  
-        #git_sparse_clone master https://github.com/immortalwrt/immortalwrt package/emortal/default-settings
-        #git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush \
-        #luci-app-zerotier luci-app-unblockneteasemusic luci-theme-argon luci-app-argon-config luci-app-watchcat \
-        #luci-app-autoreboot luci-app-usb-printer luci-app-vlmcsd luci-app-socat luci-app-arpbind luci-app-cifs-mount \
-        #vlmcsd UnblockNeteaseMusic-Go UnblockNeteaseMusic \
-        #git_sparse_clone master https://github.com/immortalwrt/luci applications/luci-app-smartdns
-        #git_sparse_clone master https://github.com/immortalwrt/packages net/smartdns
+        elif [ "${{ matrix.branch }}" == "openwrt" ]; then  
+          git_sparse_clone master https://github.com/immortalwrt/immortalwrt package/emortal/default-settings
+          #git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush \
+          #luci-app-zerotier luci-app-unblockneteasemusic luci-theme-argon luci-app-argon-config luci-app-watchcat \
+          #luci-app-autoreboot luci-app-usb-printer luci-app-vlmcsd luci-app-socat luci-app-arpbind luci-app-cifs-mount \
+          #vlmcsd UnblockNeteaseMusic-Go UnblockNeteaseMusic \
+          #git_sparse_clone master https://github.com/immortalwrt/luci applications/luci-app-smartdns
+          #git_sparse_clone master https://github.com/immortalwrt/packages net/smartdns
         
         #更新immortalwrt分支
         elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then
-        echo "暂无"
+          echo "暂无"
         fi
-
+        ######################################################################################################################################
+        for e in $(ls -d ./luci-app-*/po); do  
+          po_dir=$e  
+          if [[ -d "$po_dir/zh-cn" && ! -d "$po_dir/zh_Hans" ]]; then  
+             ln -s zh-cn "$po_dir/zh_Hans" 2>/dev/null  
+           elif [[ -d "$po_dir/zh_Hans" && ! -d "$po_dir/zh-cn" ]]; then  
+             ln -s zh_Hans "$po_dir/zh-cn" 2>/dev/null  
+           fi  
+        done  
+        
     - name: Apply
       run: |
         Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
