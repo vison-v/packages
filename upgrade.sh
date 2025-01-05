@@ -74,7 +74,7 @@ function svn_co() {
 }
 
 # default-settings
-[ "${BRANCH}" == "openwrt" ] && git_co package/lean/default-settings https://github.com/coolsnowwolf/lede
+[ "${BRANCH}" == "openwrt" ] && git_co https://github.com/coolsnowwolf/lede package/lean/default-settings 
 
 # Pink 主题
 git_clone https://github.com/virualv/luci-theme-pink
@@ -105,10 +105,10 @@ git_co luci-app-bypass https://github.com/kiddin9/openwrt-packages
 git_clone https://github.com/xiaorouji/openwrt-passwall-packages
 
 # Passwall  # 依赖 openwrt-passwall
-git_co luci-app-passwall https://github.com/xiaorouji/openwrt-passwall
+git_co https://github.com/xiaorouji/openwrt-passwall luci-app-passwall
 
 # Passwall2  # 依赖 openwrt-passwall
-git_co luci-app-passwall2 https://github.com/xiaorouji/openwrt-passwall2
+git_co https://github.com/xiaorouji/openwrt-passwall2 luci-app-passwall2
 
 # HelloWorld 依赖
 git_clone https://github.com/fw876/helloworld
@@ -118,7 +118,7 @@ git_clone https://github.com/jerrykuku/lua-maxminddb
 git_clone https://github.com/jerrykuku/luci-app-vssr
 
 # OpenClash
-git_co luci-app-openclash https://github.com/vernesong/OpenClash
+git_co https://github.com/vernesong/OpenClash luci-app-openclash
 
 # Clash
 git_clone https://github.com/frainzy1477/luci-app-clash
@@ -141,9 +141,9 @@ rm -rf $(ls istore/luci/) && cp -rf istore/luci/* . && rm -rf istore
 sed -i 's/luci-lib-ipkg/luci-base/g' luci-app-store/Makefile
 
 # 网络向导
-git_co network/services/quickstart https://github.com/linkease/nas-packages
-git_co luci/luci-app-quickstart https://github.com/linkease/nas-packages-luci
-sed -i 's/ +luci-app-store//g' luci-app-quickstart/Makefile
+#git_co network/services/quickstart https://github.com/linkease/nas-packages
+#git_co luci/luci-app-quickstart https://github.com/linkease/nas-packages-luci
+#sed -i 's/ +luci-app-store//g' luci-app-quickstart/Makefile
 
 # lucky
 # git_clone https://github.com/sirpdboy/luci-app-lucky
@@ -176,8 +176,8 @@ git_clone https://github.com/sirpdboy/netspeedtest
 # sed -i 's/DEPENDS:=\$(GO_ARCH_DEPENDS)$/DEPENDS:=\$(GO_ARCH_DEPENDS) +upx/g' netspeedtest/speedtest-web/Makefile
 
 # 流量统计
-git_co wrtbwmon https://github.com/brvphoenix/wrtbwmon
-git_co luci-app-wrtbwmon https://github.com/brvphoenix/luci-app-wrtbwmon
+#git_co wrtbwmon https://github.com/brvphoenix/wrtbwmon
+#git_co luci-app-wrtbwmon https://github.com/brvphoenix/luci-app-wrtbwmon
 
 # 全能推送
 git_clone https://github.com/zzsj0928/luci-app-pushbot
@@ -197,20 +197,20 @@ git_clone https://github.com/big-tooth/luci-app-socatg
 git_clone https://github.com/NateLol/luci-app-beardropper
 
 # IP限速
-git_co applications/luci-app-eqos https://github.com/immortalwrt/luci
-sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' luci-app-eqos/Makefile
-chmod 755 luci-app-eqos/root/etc/init.d/eqos
+#git_co applications/luci-app-eqos https://github.com/immortalwrt/luci
+#sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' luci-app-eqos/Makefile
+#chmod 755 luci-app-eqos/root/etc/init.d/eqos
 
 # 文件浏览器
 git_clone https://github.com/xiaozhuai/luci-app-filebrowser
 sed -i 's/"services"/"nas"/g; s/"Services"/"NAS"/g' luci-app-filebrowser/luasrc/controller/filebrowser.lua
 
 # gowebdav
-git_co net/gowebdav https://github.com/immortalwrt/packages
-sed -i 's/..\/..\/lang\/golang\/golang-package.mk/$(TOPDIR)\/feeds\/packages\/lang\/golang\/golang-package.mk/g' gowebdav/Makefile
-git_co applications/luci-app-gowebdav https://github.com/immortalwrt/luci
-sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' luci-app-gowebdav/Makefile
-#sed -i '/"NAS"/d; /page/d' luci-app-gowebdav/luasrc/controller/gowebdav.lua
+#git_co net/gowebdav https://github.com/immortalwrt/packages
+#sed -i 's/..\/..\/lang\/golang\/golang-package.mk/$(TOPDIR)\/feeds\/packages\/lang\/golang\/golang-package.mk/g' gowebdav/Makefile
+#git_co applications/luci-app-gowebdav https://github.com/immortalwrt/luci
+#sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' luci-app-gowebdav/Makefile
+##sed -i '/"NAS"/d; /page/d' luci-app-gowebdav/luasrc/controller/gowebdav.lua
 #sed -i 's/\"nas\"/\"services\"/g' luci-app-gowebdav/luasrc/controller/gowebdav.lua
 
 # vm-tools
