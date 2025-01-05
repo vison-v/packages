@@ -134,7 +134,7 @@ jobs:
         git reset --soft HEAD^
         git add .
         git commit -m "${Emoji[$[$RANDOM % ${#Emoji[@]}]]} Sync $(date +%Y-%m-%d" "%H:%M:%S)"
-        git push -f
+        git push -f >/dev/null 2>&1 || true
     
     - name: Delete workflow runs
       uses: Mattraks/delete-workflow-runs@main
