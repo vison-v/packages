@@ -16,9 +16,9 @@
 # 设置脚本在遇到错误时不退出  
 # set +e  
 # 清理之前的 git 缓存  
-git rm -r --cache *
+git rm -r --cache * >/dev/null 2>&1  
 # 删除当前目录下的所有子目录  
-find./* -maxdepth 0 -type d -exec rm -rf {} +
+rm -rf `find ./* -maxdepth 0 -type d >/dev/null 2>&1  
 
 # 默认分支为 openwrt  
 BRANCH=${1:-openwrt}  
