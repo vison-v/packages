@@ -14,11 +14,6 @@ on:
   schedule:
     - cron: 0 */6 * * *
   workflow_dispatch:
-    inputs:
-      ssh:
-        description: 'ssh'
-        required: false
-        default: 'true'
   watch:
     types: started
 
@@ -54,6 +49,7 @@ jobs:
         git rm -r --cache * >/dev/null 2>&1 &
         rm -rf `find ./*/* -maxdepth 0 -type d` >/dev/null 2>&1
         find ./*/ -name '.svn*' -o -name '.git*' | xargs rm -rf  
+        
         function git_clone() {
           git clone --depth 1 $1 $2
           if [ "$?" != 0 ]; then
@@ -62,6 +58,7 @@ jobs:
             kill $pid
           fi
         }
+        
         function git_sparse_clone() {
         trap 'rm -rf "$tmpdir"' EXIT
         branch="$1" curl="$2" && shift 2
@@ -84,10 +81,12 @@ jobs:
         mv -n $@ $rootdir/ || true
         cd $rootdir
         }
+        
         function mvdir() {
         mv -n `find $1/* -maxdepth 0 -type d` ./
         rm -rf $1
         }
+        ###############################################################################################################################################################
         git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./;rm -rf passwall                       ##luci-app-passwall
         git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./;rm -rf passwall2                  ##luci-app-passwall2
         git clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small                              ##翻越长城app及依赖
@@ -117,22 +116,12 @@ jobs:
         elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then
         echo "暂无"
         fi
-    
-    - name: SSH connection to Actions
-      uses: kiddin9/debugger-action@master
-      if: github.event.inputs.ssh == 'true'
+        ###############################################################################################################################################################
+        find ./ -maxdepth 1 -type d ! -name 'zh-cn' ! -name 'zh_Hans' -exec rm -rf {} +  
 
     - name: Apply
       run: |
         Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
-        git add .
-        git commit -m "${Emoji[$[$RANDOM % ${#Emoji[@]}]]} Sync $(date +%Y-%m-%d" "%H:%M:%S)"
-        for pkg in $(git diff-tree --no-commit-id --name-only HEAD); do
-          if [ "$(grep "PKG_RELEASE" $pkg/Makefile)" ]; then
-            sed -i "s/PKG_RELEASE:=.*/PKG_RELEASE:=$(git rev-list --count ${{ matrix.branch }} $pkg)/" $pkg/Makefile || true
-          fi
-        done
-        git reset --soft HEAD^
         git add .
         git commit -m "${Emoji[$[$RANDOM % ${#Emoji[@]}]]} Sync $(date +%Y-%m-%d" "%H:%M:%S)"
         git push origin ${{ matrix.branch }}
