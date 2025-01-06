@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 LUCI_TITLE:=Pink Theme
 LUCI_DEPENDS:=
 PKG_VERSION:=0.1
-PKG_RELEASE:=01-20200601
+PKG_RELEASE:=2
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
