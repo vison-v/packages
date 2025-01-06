@@ -50,6 +50,7 @@ jobs:
         rm -rf `find ./*/* -maxdepth 0 -type d` >/dev/null 2>&1
         #find ./*/ -name '.svn*' -o -name '.git*' | xargs rm -rf  
         rm -rf ./*/{.svn*,.git*}
+        rm -rf ./*/*/{.svn*,.git*}
         
         function git_clone() {
           git clone --depth 1 $1 $2
