@@ -1,7 +1,0 @@
-#!/bin/sh
-uci batch <<-EOF
-	set luci.themes.Pink=/luci-static/pink
-	set luci.main.mediaurlbase=/luci-static/pink
-	commit luci
-EOF
-exit 0
