@@ -11,12 +11,6 @@
 # File name: upgrade.sh
 # Description: OpenWrt packages update script
 #====================================================================
-# 启用扩展通配符  
-shopt -s extglob  
-
-# 设置脚本在遇到错误时不退出  
-set +e  
-
 # 清理之前的 git 缓存  
 git rm -r --cache * >/dev/null 2>&1 &  
 # 删除当前目录下的所有子目录  
