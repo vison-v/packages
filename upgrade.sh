@@ -15,7 +15,7 @@
 BRANCH=${1:-openwrt}
 
 function _lang() {
-  if [ "${BRANCH}" == "openwrt" || "lede" || "immortalwrt" ]; then
+  if [ "${BRANCH}" == "openwrt" ] || [ "${BRANCH}" == "lede" ] || [ "${BRANCH}" == "immortalwrt" ]; then
     find $1 -maxdepth 1 -type d ! -name 'zh-cn' ! -name 'zh_Hans' -exec rm -rf {} +  
     for I in $(find $1 -name "zh-cn"); do
       [ ! -d "${I}" ] && continue
