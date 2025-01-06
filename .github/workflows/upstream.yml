@@ -53,8 +53,9 @@ jobs:
       - name: Commit and Push
         if: env.ischanges == 'true'
         run: |
+          Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
           git add .
-          git commit -m "${{ matrix.branch }} update $(date +%Y-%m-%d" "%H:%M:%S)"
+          git commit -m "${{ matrix.branch }} update $(date +%Y-%m-%d" "%H:%M:%S) ${Emoji[$[$RANDOM % ${#Emoji[@]}]]}"
           git push -f
 
       #- name: Delete workflow runs
