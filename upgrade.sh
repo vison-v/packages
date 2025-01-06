@@ -102,17 +102,17 @@ elif [ "${BRANCH}" == "immortalwrt" ]; then
 fi  
 
 # 处理语言文件  
-for I in $(find "$1" -name "zh-cn"); do  
-    [ ! -d "${I}" ] && continue  
-    [ -d "${I/zh-cn/zh_Hans}" ] && continue  
-    cp -rf "${I}" "${I/zh-cn/zh_Hans}"  
+for e in luci-app-*/po/*; do  
+    [ ! -d "$e" ] && continue  
+    [ -d "${e/zh-cn/zh_Hans}" ] && continue  
+    cp -rf "$e" "${e/zh-cn/zh_Hans}"  
 done  
 
-for I in $(find "$1" -name "zh_Hans"); do  
-    [ ! -d "${I}" ] && continue  
-    [ -d "${I/zh_Hans/zh-cn}" ] && continue  
-    cp -rf "${I}" "${I/zh_Hans/zh-cn}"  
-done  
+for e in luci-app-*/po/*; do  
+    [ ! -d "$e" ] && continue  
+    [ -d "${e/zh_Hans/zh-cn}" ] && continue  
+    cp -rf "$e" "${e/zh_Hans/zh-cn}"  
+done
 
 # 清理工作目录  
 rm -rf ./*/.svn*  
