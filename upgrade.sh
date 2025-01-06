@@ -12,204 +12,83 @@
 # Description: OpenWrt packages update script
 #====================================================================
 
-BRANCH=${1:-openwrt}
+function git_clone() {  
+    git clone --depth 1 $1 $2  
+    if [ "$?" != 0 ]; then  
+        echo "error on $1"  
+        pid="$(ps -q $$)"  
+        kill $pid  
+    fi  
+}  
 
-function _lang() {  
-  if [[ "${BRANCH}" == "openwrt" || "${BRANCH}" == "lede" || "${BRANCH}" == "immortalwrt" ]]; then  
-    find "$1" -type d -name "zh-cn" | while read -r I; do  
-      new_dir="${I/zh-cn/zh_Hans}"  
-      [ -d "$new_dir" ] && continue  
-      cp -rf "$I" "$new_dir"  
-    done  
-  else  
-    find "$1" -type d -name "zh_Hans" | while read -r I; do  
-      new_dir="${I/zh_Hans/zh-cn}"  
-      [ -d "$new_dir" ] && continue  
-      cp -rf "$I" "$new_dir"  
-    done  
-  fi  
-}
+function git_sparse_clone() {  
+    trap 'rm -rf "$tmpdir"' EXIT  
+    branch="$1"   
+    curl="$2"   
+    shift 2  
+    rootdir="$PWD"  
+    tmpdir="$(mktemp -d)" || exit 1  
 
-function git_clone() {
-  rm -rf $(basename $1 .git)
-  branch=""
-  [ ! -z "$2" ] && branch="-b $2"
-  git clone --depth 1 ${branch} $1 $(basename $1 .git) || true
-  # sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' $(basename $1 .git)/Makefile
-  rm -rf $(basename $1 .git)/.svn* $(basename $1 .git)/.git*
-  _lang $(basename $1 .git)
-}
+    if [ ${#branch} -lt 10 ]; then  
+        git clone -b "$branch" --depth 1 --filter=blob:none --sparse "$curl" "$tmpdir"  
+        cd "$tmpdir"  
+    else  
+        git clone --filter=blob:none --sparse "$curl" "$tmpdir"  
+        cd "$tmpdir"  
+        git checkout $branch  
+    fi  
 
-function git_co() {
-  rm -rf ${1//*\/}
-  rm -rf /tmp/git_co
-  branch=""
-  [ ! -z "$3" ] && branch="-b $3"
-  git clone --depth 1 ${branch} $2 /tmp/git_co || true
-  mkdir -p ${1//*\/}
-  cp -rf /tmp/git_co/$1/* ${1//*\/}
-  rm -rf /tmp/git_co
-  # sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' $(basename $1 .git)/Makefile
-  rm -rf ${1//*\/}/.svn* ${1//*\/}/.git*
-  _lang ${1//*\/}
-}
+    if [ "$?" != 0 ]; then  
+        echo "error on $curl"  
+        exit 1  
+    fi  
 
-function svn_co() {
-  rm -rf $(basename $1 .git)
-  svn co $1 $(basename $1 .git) || true
-  # sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' $(basename $1 .git)/Makefile
-  rm -rf $(basename $1 .git)/.svn* $(basename $1 .git)/.git*
-  _lang $(basename $1 .git)
-}
+    git sparse-checkout init --cone  
+    git sparse-checkout set "$@"  
+    mv -n "$@" "$rootdir/" || true  
+    cd "$rootdir"  
+}  
 
-# default-settings
-[ "${BRANCH}" == "openwrt" ] && git_co package/lean/default-settings https://github.com/coolsnowwolf/lede
+function mvdir() {  
+    mv -n `find $1/* -maxdepth 0 -type d` ./  
+    rm -rf $1  
+}  
 
-# Pink 主题
-git_clone https://github.com/virualv/luci-theme-pink
+git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./; rm -rf passwall  ## luci-app-passwall  
+git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./; rm -rf passwall2  ## luci-app-passwall2  
+git clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small  ## 翻越长城app及依赖  
 
-# Argon 主题
-git_clone https://github.com/jerrykuku/luci-theme-argon
+git_sparse_clone main https://github.com/kiddin9/luci-app-tcpdump luci-app-tcpdump  
+git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" luci-app-lucky lucky  
 
-# Argon 主题配置插件
-git_clone https://github.com/jerrykuku/luci-app-argon-config
-#sed -i 's/\(+luci-compat\)/\1 +luci-theme-argon/' luci-app-argon-config/Makefile
+# 更新lede分支  
+if [ "${{ matrix.branch }}" == "lede" ]; then  
+    git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush luci-theme-argon luci-app-argon-config  
+    git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-quickstart quickstart luci-app-eqosplus \
+    luci-app-oaf open-app-filter oaf luci-app-wrtbwmon wrtbwmon \
+    luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl  
 
-# 在线用户
-git_clone https://github.com/selfcan/luci-app-onliner
-chmod 755 luci-app-onliner/root/usr/share/onliner/setnlbw.sh
+# 更新openwrt分支  
+elif [ "${{ matrix.branch }}" == "openwrt" ]; then  
+    git_sparse_clone master https://github.com/immortalwrt/immortalwrt package/emortal/default-settings  
+    # Uncomment the following lines for additional packages  
+    # git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush \
+    # luci-app-zerotier luci-app-unblockneteasemusic luci-theme-argon luci-app-argon-config luci-app-watchcat \
+    # luci-app-autoreboot luci-app-usb-printer luci-app-vlmcsd luci-app-socat luci-app-arpbind luci-app-cifs-mount \
+    # vlmcsd UnblockNeteaseMusic-Go UnblockNeteaseMusic \
+    # git_sparse_clone master https://github.com/immortalwrt/luci applications/luci-app-smartdns  
+    # git_sparse_clone master https://github.com/immortalwrt/packages net/smartdns  
 
-# 关机
-git_clone https://github.com/esirplayground/luci-app-poweroff
+# 更新immortalwrt分支  
+elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then  
+    echo "暂无"  
+fi  
 
-# 自动格式化分区、扩容、自动挂载
-git_clone https://github.com/sirpdboy/luci-app-partexp
+# Clean up  
+rm -rf ./*/.svn*  
+rm -rf ./*/.git*  
+find ./ -path '*/po/*' -type d ! -name 'zh-cn' ! -name 'zh_Hans' -print  
+# find ./ -path '*/po/*' -type d ! -name 'zh-cn' ! -name 'zh_Hans' -exec rm -rf {} +  
 
-# bypass
-#git_clone https://github.com/kiddin9/openwrt-bypass
-git_co luci-app-bypass https://github.com/kiddin9/openwrt-packages
-#sed -i 's/luci-lib-ipkg/luci-base/g' openwrt-bypass/luci-app-bypass/Makefile
-
-# openwrt-passwall 依赖
-git_clone https://github.com/xiaorouji/openwrt-passwall-packages
-
-# Passwall  # 依赖 openwrt-passwall
-git_co luci-app-passwall https://github.com/xiaorouji/openwrt-passwall
-
-# Passwall2  # 依赖 openwrt-passwall
-git_co luci-app-passwall2 https://github.com/xiaorouji/openwrt-passwall2
-
-# HelloWorld 依赖
-git_clone https://github.com/fw876/helloworld
-
-# HelloWorld  # 依赖 helloworld 和 openwrt-passwall
-git_clone https://github.com/jerrykuku/lua-maxminddb
-git_clone https://github.com/jerrykuku/luci-app-vssr
-
-# OpenClash
-git_co luci-app-openclash https://github.com/vernesong/OpenClash
-
-# Clash
-git_clone https://github.com/frainzy1477/luci-app-clash
-
-# iKoolProxy 滤广告
-git_clone https://github.com/yaof2/luci-app-ikoolproxy
-
-# AdGuard Home
-git_clone https://github.com/rufengsuixing/luci-app-adguardhome
-
-# SmartDNS # 与 bypass 冲突
-#git_clone https://github.com/pymumu/openwrt-smartdns
-#git_clone https://github.com/pymumu/luci-app-smartdns lede
-#sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' luci-app-smartdns/Makefile
-
-# 应用商店
-git_clone https://github.com/linkease/istore-ui
-git_clone https://github.com/linkease/istore
-rm -rf $(ls istore/luci/) && cp -rf istore/luci/* . && rm -rf istore
-sed -i 's/luci-lib-ipkg/luci-base/g' luci-app-store/Makefile
-
-# 网络向导
-git_co network/services/quickstart https://github.com/linkease/nas-packages
-git_co luci/luci-app-quickstart https://github.com/linkease/nas-packages-luci
-sed -i 's/ +luci-app-store//g' luci-app-quickstart/Makefile
-
-# lucky
-# git_clone https://github.com/sirpdboy/luci-app-lucky
-# 和DDNS-GO只能选择其中的一个就可以了，已经涵盖ddns-go了
-#
-# 拉取gdy666/lucky主线
-git_clone https://github.com/gdy666/luci-app-lucky
-sed -i 's/#LUCI_DEPENDS:=+lucky/LUCI_DEPENDS:=+lucky/g' luci-app-lucky/luci-app-lucky/Makefile
-
-# DDNS-GO
-git_clone https://github.com/sirpdboy/luci-app-ddns-go
-
-# 实时监控
-git_clone https://github.com/sirpdboy/luci-app-netdata
-
-# 高级设置
-git_clone https://github.com/sirpdboy/luci-app-advanced
-
-# 定时任务
-git_clone https://github.com/DevOpenWRT-Router/luci-app-rebootschedule
-sed -i '/firstchild/d' luci-app-rebootschedule/luasrc/controller/rebootschedule.lua
-sed -i 's/"control"/"system"/g; s/"Timing setting"/"定时任务"/g' luci-app-rebootschedule/luasrc/controller/rebootschedule.lua
-chmod 755 luci-app-rebootschedule/root/etc/init.d/rebootschedule
-
-# 应用过滤
-git_clone https://github.com/destan19/OpenAppFilter
-
-# 网速测试
-git_clone https://github.com/sirpdboy/netspeedtest
-# sed -i 's/DEPENDS:=\$(GO_ARCH_DEPENDS)$/DEPENDS:=\$(GO_ARCH_DEPENDS) +upx/g' netspeedtest/speedtest-web/Makefile
-
-# 流量统计
-git_co wrtbwmon https://github.com/brvphoenix/wrtbwmon
-git_co luci-app-wrtbwmon https://github.com/brvphoenix/luci-app-wrtbwmon
-
-# 全能推送
-git_clone https://github.com/zzsj0928/luci-app-pushbot
-
-# ZeroTier
-git_clone https://github.com/rufengsuixing/luci-app-zerotier
-sed -i 's/"vpn"/"services"/g; s/"VPN"/"Services"/g' luci-app-zerotier/luasrc/controller/zerotier.lua
-
-# Tailscale
-git_clone https://github.com/MoZhonghua/openwrt-tailscale
-
-# IPv6 端口转发
-git_clone https://github.com/big-tooth/luci-app-socatg
-#sed -i 's/socat\r/socatg\r/g' luci-app-socatg/Makefile && sed -i 's/socat$/socatg/g' luci-app-socatg/Makefile
-
-# beardropper
-git_clone https://github.com/NateLol/luci-app-beardropper
-
-# IP限速
-git_co applications/luci-app-eqos https://github.com/immortalwrt/luci
-sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' luci-app-eqos/Makefile
-chmod 755 luci-app-eqos/root/etc/init.d/eqos
-
-# 文件浏览器
-git_clone https://github.com/xiaozhuai/luci-app-filebrowser
-sed -i 's/"services"/"nas"/g; s/"Services"/"NAS"/g' luci-app-filebrowser/luasrc/controller/filebrowser.lua
-
-# gowebdav
-git_co net/gowebdav https://github.com/immortalwrt/packages
-sed -i 's/..\/..\/lang\/golang\/golang-package.mk/$(TOPDIR)\/feeds\/packages\/lang\/golang\/golang-package.mk/g' gowebdav/Makefile
-git_co applications/luci-app-gowebdav https://github.com/immortalwrt/luci
-sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' luci-app-gowebdav/Makefile
-#sed -i '/"NAS"/d; /page/d' luci-app-gowebdav/luasrc/controller/gowebdav.lua
-#sed -i 's/\"nas\"/\"services\"/g' luci-app-gowebdav/luasrc/controller/gowebdav.lua
-
-# vm-tools
-# git_clone https://github.com/fangli/openwrt-vm-tools
-
-# clean
-rm -rf ./*/.svn*
-rm -rf ./*/.git*
-#find ./ -path '*/po/*' -type d ! -name 'zh-cn' ! -name 'zh_Hans' -print
-#find ./ -path '*/po/*' -type d ! -name 'zh-cn' ! -name 'zh_Hans' -exec rm -rf {} +  
-
-#end
+# End  
 exit 0
