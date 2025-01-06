@@ -14,55 +14,45 @@
 
 BRANCH=${1:-openwrt}
 
-function _lang() {  
-  for I in $(find "$1" -name "zh-cn"); do  
-    [ ! -d "${I}" ] && continue  
-    [ -d "${I/zh-cn/zh_Hans}" ] && continue  
-    cp -rf "${I}" "${I/zh-cn/zh_Hans}"  
-  done  
-  for I in $(find "$1" -name "zh_Hans"); do  
-    [ ! -d "${I}" ] && continue  
-    [ -d "${I/zh_Hans/zh-cn}" ] && continue  
-    cp -rf "${I}" "${I/zh_Hans/zh-cn}"  
-  done  
+function _lang() {
+  if [ "${BRANCH}" == "openwrt" || "lede" || "immortalwrt" ]; then
+    find $1 -maxdepth 1 -type d ! -name 'zh-cn' ! -name 'zh_Hans' -exec rm -rf {} +  
+    for I in $(find $1 -name "zh-cn"); do
+      [ ! -d "${I}" ] && continue
+      [ -d "${I/zh-cn/zh_Hans}" ] && continue
+      cp -rf "${I}" "${I/zh-cn/zh_Hans}"
+    done
+  else
+    for I in $(find $1 -name "zh_Hans"); do
+      [ ! -d "${I}" ] && continue
+      [ -d "${I/zh_Hans/zh-cn}" ] && continue
+      cp -rf "${I}" "${I/zh_Hans/zh-cn}"
+    done
+  fi
 }
 
-function git_clone() {  
-    git clone --depth 1 "$1" "$2"  
-    if [ "$?" != 0 ]; then  
-        echo "error on $1"  
-        pid="$(ps -q $$)"  
-        kill "$pid"  
-    fi  
-    find "$2" -name '.svn' -o -name '.git' | xargs rm -rf  
-  _lang $2
+function git_clone() {
+  rm -rf $(basename $1 .git)
+  branch=""
+  [ ! -z "$2" ] && branch="-b $2"
+  git clone --depth 1 ${branch} $1 $(basename $1 .git) || true
+  # sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' $(basename $1 .git)/Makefile
+  rm -rf $(basename $1 .git)/.svn* $(basename $1 .git)/.git*
+  _lang $(basename $1 .git)
 }
 
 function git_co() {
-    trap 'rm -rf "$tmpdir"' EXIT  
-    branch="$1"  
-    curl="$2"  
-    shift 2  
-    rootdir="$PWD"  
-    tmpdir="$(mktemp -d)" || exit 1  
-    if [ ${#branch} -lt 10 ]; then  
-        git clone -b "$branch" --depth 1 --filter=blob:none --sparse "$curl" "$tmpdir"  
-        cd "$tmpdir"  
-    else  
-        git clone --filter=blob:none --sparse "$curl" "$tmpdir"  
-        cd "$tmpdir"  
-        git checkout "$branch"  
-    fi  
-    if [ "$?" != 0 ]; then  
-        echo "error on $curl"  
-        exit 1  
-    fi  
-    find "$tmpdir" -name '.svn' -o -name '.git' | xargs rm -rf  
-    git sparse-checkout init --cone  
-    git sparse-checkout set "$@"  
-    mv -n "$@" "$rootdir/" || true  
-    cd "$rootdir"  
-	_lang $@
+  rm -rf ${1//*\/}
+  rm -rf /tmp/git_co
+  branch=""
+  [ ! -z "$3" ] && branch="-b $3"
+  git clone --depth 1 ${branch} $2 /tmp/git_co || true
+  mkdir -p ${1//*\/}
+  cp -rf /tmp/git_co/$1/* ${1//*\/}
+  rm -rf /tmp/git_co
+  # sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' $(basename $1 .git)/Makefile
+  rm -rf ${1//*\/}/.svn* ${1//*\/}/.git*
+  _lang ${1//*\/}
 }
 
 function svn_co() {
@@ -74,7 +64,7 @@ function svn_co() {
 }
 
 # default-settings
-[ "${BRANCH}" == "openwrt" ] && git_co https://github.com/coolsnowwolf/lede package/lean/default-settings 
+[ "${BRANCH}" == "openwrt" ] && git_co package/lean/default-settings https://github.com/coolsnowwolf/lede
 
 # Pink 主题
 git_clone https://github.com/virualv/luci-theme-pink
@@ -105,10 +95,10 @@ git_co luci-app-bypass https://github.com/kiddin9/openwrt-packages
 git_clone https://github.com/xiaorouji/openwrt-passwall-packages
 
 # Passwall  # 依赖 openwrt-passwall
-git_co https://github.com/xiaorouji/openwrt-passwall luci-app-passwall
+git_co luci-app-passwall https://github.com/xiaorouji/openwrt-passwall
 
 # Passwall2  # 依赖 openwrt-passwall
-git_co https://github.com/xiaorouji/openwrt-passwall2 luci-app-passwall2
+git_co luci-app-passwall2 https://github.com/xiaorouji/openwrt-passwall2
 
 # HelloWorld 依赖
 git_clone https://github.com/fw876/helloworld
@@ -118,7 +108,7 @@ git_clone https://github.com/jerrykuku/lua-maxminddb
 git_clone https://github.com/jerrykuku/luci-app-vssr
 
 # OpenClash
-git_co https://github.com/vernesong/OpenClash luci-app-openclash
+git_co luci-app-openclash https://github.com/vernesong/OpenClash
 
 # Clash
 git_clone https://github.com/frainzy1477/luci-app-clash
@@ -141,9 +131,9 @@ rm -rf $(ls istore/luci/) && cp -rf istore/luci/* . && rm -rf istore
 sed -i 's/luci-lib-ipkg/luci-base/g' luci-app-store/Makefile
 
 # 网络向导
-#git_co network/services/quickstart https://github.com/linkease/nas-packages
-#git_co luci/luci-app-quickstart https://github.com/linkease/nas-packages-luci
-#sed -i 's/ +luci-app-store//g' luci-app-quickstart/Makefile
+git_co network/services/quickstart https://github.com/linkease/nas-packages
+git_co luci/luci-app-quickstart https://github.com/linkease/nas-packages-luci
+sed -i 's/ +luci-app-store//g' luci-app-quickstart/Makefile
 
 # lucky
 # git_clone https://github.com/sirpdboy/luci-app-lucky
@@ -176,8 +166,8 @@ git_clone https://github.com/sirpdboy/netspeedtest
 # sed -i 's/DEPENDS:=\$(GO_ARCH_DEPENDS)$/DEPENDS:=\$(GO_ARCH_DEPENDS) +upx/g' netspeedtest/speedtest-web/Makefile
 
 # 流量统计
-#git_co wrtbwmon https://github.com/brvphoenix/wrtbwmon
-#git_co luci-app-wrtbwmon https://github.com/brvphoenix/luci-app-wrtbwmon
+git_co wrtbwmon https://github.com/brvphoenix/wrtbwmon
+git_co luci-app-wrtbwmon https://github.com/brvphoenix/luci-app-wrtbwmon
 
 # 全能推送
 git_clone https://github.com/zzsj0928/luci-app-pushbot
@@ -197,20 +187,20 @@ git_clone https://github.com/big-tooth/luci-app-socatg
 git_clone https://github.com/NateLol/luci-app-beardropper
 
 # IP限速
-#git_co applications/luci-app-eqos https://github.com/immortalwrt/luci
-#sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' luci-app-eqos/Makefile
-#chmod 755 luci-app-eqos/root/etc/init.d/eqos
+git_co applications/luci-app-eqos https://github.com/immortalwrt/luci
+sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' luci-app-eqos/Makefile
+chmod 755 luci-app-eqos/root/etc/init.d/eqos
 
 # 文件浏览器
 git_clone https://github.com/xiaozhuai/luci-app-filebrowser
 sed -i 's/"services"/"nas"/g; s/"Services"/"NAS"/g' luci-app-filebrowser/luasrc/controller/filebrowser.lua
 
 # gowebdav
-#git_co net/gowebdav https://github.com/immortalwrt/packages
-#sed -i 's/..\/..\/lang\/golang\/golang-package.mk/$(TOPDIR)\/feeds\/packages\/lang\/golang\/golang-package.mk/g' gowebdav/Makefile
-#git_co applications/luci-app-gowebdav https://github.com/immortalwrt/luci
-#sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' luci-app-gowebdav/Makefile
-##sed -i '/"NAS"/d; /page/d' luci-app-gowebdav/luasrc/controller/gowebdav.lua
+git_co net/gowebdav https://github.com/immortalwrt/packages
+sed -i 's/..\/..\/lang\/golang\/golang-package.mk/$(TOPDIR)\/feeds\/packages\/lang\/golang\/golang-package.mk/g' gowebdav/Makefile
+git_co applications/luci-app-gowebdav https://github.com/immortalwrt/luci
+sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' luci-app-gowebdav/Makefile
+#sed -i '/"NAS"/d; /page/d' luci-app-gowebdav/luasrc/controller/gowebdav.lua
 #sed -i 's/\"nas\"/\"services\"/g' luci-app-gowebdav/luasrc/controller/gowebdav.lua
 
 # vm-tools
