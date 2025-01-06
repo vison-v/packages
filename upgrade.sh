@@ -80,7 +80,7 @@ git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" luci-app-lucky 
 if [ "${BRANCH}" == "lede" ]; then  
     git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush luci-theme-argon luci-app-argon-config  
     
-    git_sparse_clone main "https://github.com/vison-v/lede" config  
+    git_sparse_clone master "https://github.com/vison-v/lede" config  
     #git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-quickstart quickstart luci-app-eqosplus \
     #luci-app-oaf open-app-filter oaf luci-app-wrtbwmon wrtbwmon \
     #luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl  
