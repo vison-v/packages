@@ -18,7 +18,7 @@
 # 清理之前的 git 缓存  
 git rm -r --cache *
 # 删除当前目录下的所有子目录  
-rm -rf `find ./* -maxdepth 0 -type d
+find./* -maxdepth 0 -type d -exec rm -rf {} +
 
 # 默认分支为 openwrt  
 BRANCH=${1:-openwrt}  
