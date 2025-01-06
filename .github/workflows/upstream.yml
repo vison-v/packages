@@ -59,6 +59,7 @@ jobs:
             pid="$( ps -q $$ )"
             kill $pid
           fi
+          rm -rf ./*/{.svn*,.git*}
         }
         
         function git_sparse_clone() {
@@ -82,6 +83,7 @@ jobs:
         git sparse-checkout set "$@"
         mv -n $@ $rootdir/ || true
         cd $rootdir
+        rm -rf ./*/{.svn*,.git*}
         }
         
         function mvdir() {
