@@ -20,9 +20,9 @@ shopt -s extglob
 set +e  
 
 # 清理之前的 git 缓存  
-#git rm -r --cache * >/dev/null 2>&1 &  
+git rm -r --cache * >/dev/null 2>&1 &  
 # 删除当前目录下的所有子目录  
-#rm -rf `find ./* -maxdepth 0 -type d` >/dev/null 2>&1  
+rm -rf `find ./* -maxdepth 0 -type d` >/dev/null 2>&1  
 
 # 默认分支为 openwrt  
 BRANCH=${1:-openwrt}  
@@ -79,11 +79,10 @@ function mvdir() {
 
 # 更新 lede 分支  
 if [ "${BRANCH}" == "lede" ]; then  
-    #git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush luci-theme-argon luci-app-argon-config  
+    git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush luci-theme-argon luci-app-argon-config  
     #git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-quickstart quickstart luci-app-eqosplus \
     #luci-app-oaf open-app-filter oaf luci-app-wrtbwmon wrtbwmon \
     #luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl  
-    echo "暂无" 
 
 # 更新 openwrt 分支  
 elif [ "${BRANCH}" == "openwrt" ]; then  
@@ -95,7 +94,6 @@ elif [ "${BRANCH}" == "openwrt" ]; then
     # vlmcsd UnblockNeteaseMusic-Go UnblockNeteaseMusic \
     # git_sparse_clone master https://github.com/immortalwrt/luci applications/luci-app-smartdns  
     # git_sparse_clone master https://github.com/immortalwrt/packages net/smartdns  
-    echo "暂无" 
 
 # 更新 immortalwrt 分支  
 elif [ "${BRANCH}" == "immortalwrt" ]; then  
