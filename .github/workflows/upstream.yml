@@ -118,7 +118,7 @@ jobs:
         fi
         ###############################################################################################################################################################
         #find luci-app-*/po -type d ! -name 'zh-cn' ! -name 'zh_Hans' -exec rm -rf {} +  
-        ls -d luci-app-*/po | grep -v '/zh-cn/' | grep -v '/zh_Hans/' | xargs rm -rf
+        #ls -d luci-app-*/po | grep -v '/zh-cn/' | grep -v '/zh_Hans/' | xargs rm -rf
         for e in $(ls -d luci-app-*/po); do  
                 if [[ -d $e/zh-cn && ! -d $e/zh_Hans ]]; then  
                         ln -s zh-cn $e/zh_Hans 2>/dev/null  
