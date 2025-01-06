@@ -85,7 +85,7 @@ if [ "${BRANCH}" == "lede" ]; then
     #luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl  
 fi
 # 更新 openwrt 分支  
-elif [ "${BRANCH}" == "openwrt" ]; then  
+if [ "${BRANCH}" == "openwrt" ]; then  
     git_sparse_clone master https://github.com/immortalwrt/immortalwrt package/emortal/default-settings  
     # 如需更多软件包，可取消注释以下行  
     # git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush \
@@ -96,7 +96,7 @@ elif [ "${BRANCH}" == "openwrt" ]; then
     # git_sparse_clone master https://github.com/immortalwrt/packages net/smartdns  
 fi
 # 更新 immortalwrt 分支  
-elif [ "${BRANCH}" == "immortalwrt" ]; then  
+if [ "${BRANCH}" == "immortalwrt" ]; then  
     echo "暂无"  
 fi  
 
