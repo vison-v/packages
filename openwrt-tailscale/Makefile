@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tailscale
 PKG_VERSION:=1.26.1
-PKG_RELEASE:=2
+PKG_RELEASE:=1
 
 PKG_SOURCE_NAME=tailscale
 PKG_SOURCE:=v$(PKG_VERSION).tar.gz
