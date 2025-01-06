@@ -83,7 +83,7 @@ if [ "${BRANCH}" == "lede" ]; then
     #git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-quickstart quickstart luci-app-eqosplus \
     #luci-app-oaf open-app-filter oaf luci-app-wrtbwmon wrtbwmon \
     #luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl  
-
+fi
 # 更新 openwrt 分支  
 elif [ "${BRANCH}" == "openwrt" ]; then  
     git_sparse_clone master https://github.com/immortalwrt/immortalwrt package/emortal/default-settings  
@@ -94,7 +94,7 @@ elif [ "${BRANCH}" == "openwrt" ]; then
     # vlmcsd UnblockNeteaseMusic-Go UnblockNeteaseMusic \
     # git_sparse_clone master https://github.com/immortalwrt/luci applications/luci-app-smartdns  
     # git_sparse_clone master https://github.com/immortalwrt/packages net/smartdns  
-
+fi
 # 更新 immortalwrt 分支  
 elif [ "${BRANCH}" == "immortalwrt" ]; then  
     echo "暂无"  
