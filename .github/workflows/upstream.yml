@@ -52,8 +52,8 @@ jobs:
         shopt -s extglob
         set +e
         git rm -r --cache * >/dev/null 2>&1 &
-        rm -rf `find ./* -maxdepth 0 -type d` >/dev/null 2>&1
-        find ./ -name '.svn*' -o -name '.git*' | xargs rm -rf  
+        rm -rf `find ./*/* -maxdepth 0 -type d` >/dev/null 2>&1
+        find ./*/ -name '.svn*' -o -name '.git*' | xargs rm -rf  
         function git_clone() {
           git clone --depth 1 $1 $2
           if [ "$?" != 0 ]; then
