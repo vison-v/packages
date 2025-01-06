@@ -1,65 +1,82 @@
-#
-# Copyright (C) 2022 Ing <https://github.com/wjz304>
-#
-# This is free software, licensed under the MIT License.
-# See /LICENSE for more information.
-#
+#  
+# Copyright (C) 2022 Ing <https://github.com/wjz304>  
+#  
+# This is free software, licensed under the MIT License.  
+# See /LICENSE for more information.  
+#  
 
-name: Repo packages
+name: Repo packages  
 
-on:
-  push:
-  schedule:
-    - cron: 0 */6 * * *
-  workflow_dispatch:
+on:  
+  push:  
+  schedule:  
+    - cron: 0 */6 * * *  
+  workflow_dispatch:  
 
-jobs:
-  update:
-    strategy:
-      matrix:
-        branch: [openwrt, lede,immortalwrt]
+jobs:  
+  update:  
+    strategy:  
+      matrix:  
+        branch: [openwrt, lede, immortalwrt]  
 
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@main
-        with:
-          ref: ${{ matrix.branch }}
-          fetch-depth: 0
+    runs-on: ubuntu-latest  
+    steps:  
+      - name: Checkout  
+        uses: actions/checkout@v2  
+        with:  
+          ref: ${{ matrix.branch }}  
+          fetch-depth: 0  
 
-      - name: Initialization environment
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-          sudo timedatectl set-timezone "Asia/Shanghai"
+      - name: Initialization environment  
+        run: |  
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"  
+          git config --global user.name "github-actions[bot]"  
+          sudo timedatectl set-timezone "Asia/Shanghai"  
 
-      - name: Repo packages
-        run: |
-          cd $GITHUB_WORKSPACE
-          if [ -f "upgrade.sh" ]; then
-            chmod +x ./upgrade.sh && ./upgrade.sh ${{ matrix.branch }}
-          else
-            curl -skL https://raw.githubusercontent.com/vison-v/packages/main/upgrade.sh | bash -s ${{ matrix.branch }}
-          fi
+      - name: Fetch Remote Changes  
+        run: |  
+          git fetch origin ${{ matrix.branch }}  
 
-      - name: Check for changes
-        run: |
-          if [ -n "$(git status -s | grep -v -w timestamp)" ];then
-            echo "ischanges=true" >> $GITHUB_ENV
-          else
-            echo "ischanges=false" >> $GITHUB_ENV
-          fi
+      - name: Check for Updates  
+        id: check_updates  
+        run: |  
+          LOCAL=$(git rev-parse ${{ matrix.branch }})  
+          REMOTE=$(git rev-parse origin/${{ matrix.branch }})  
+          if [ "$LOCAL" != "$REMOTE" ]; then  
+            echo "updates=true" >> $GITHUB_ENV  
+          else  
+            echo "updates=false" >> $GITHUB_ENV  
+          fi  
 
-      - name: Commit and Push
-        if: env.ischanges == 'true'
-        run: |
-          Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
-          git add .
-          git commit -m "${{ matrix.branch }} update $(date +%Y-%m-%d" "%H:%M:%S) ${Emoji[$[$RANDOM % ${#Emoji[@]}]]}"
-          git push -f
+      - name: Repo packages  
+        if: env.updates == 'true'  
+        run: |  
+          cd $GITHUB_WORKSPACE  
+          if [ -f "upgrade.sh" ]; then  
+            chmod +x ./upgrade.sh && ./upgrade.sh ${{ matrix.branch }}  
+          else  
+            curl -skL https://raw.githubusercontent.com/vison-v/packages/main/upgrade.sh | bash -s ${{ matrix.branch }}  
+          fi  
 
-      #- name: Delete workflow runs
-      #  uses: Mattraks/delete-workflow-runs@v2
-      #  with:
-      #    retain_days: 1
-      #    keep_minimum_runs: 3
+      - name: Check for changes  
+        if: env.updates == 'true'  
+        run: |  
+          if [ -n "$(git status -s | grep -v -w timestamp)" ]; then  
+            echo "ischanges=true" >> $GITHUB_ENV  
+          else  
+            echo "ischanges=false" >> $GITHUB_ENV  
+          fi  
+
+      - name: Commit and Push  
+        if: env.ischanges == 'true'  
+        run: |  
+          Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")  
+          git add .  
+          git commit -m "${{ matrix.branch }} update $(date +%Y-%m-%d" "%H:%M:%S) ${Emoji[$[$RANDOM % ${#Emoji[@]}]]}"  
+          git push -f  
+
+      # - name: Delete workflow runs  
+      #   uses: Mattraks/delete-workflow-runs@v2  
+      #   with:  
+      #     retain_days: 1  
+      #     keep_minimum_runs: 3
