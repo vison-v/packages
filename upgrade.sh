@@ -12,30 +12,32 @@
 # Description: OpenWrt packages update script
 #====================================================================
 # 启用扩展通配符  
-shopt -s extglob  
+# shopt -s extglob  
 # 设置脚本在遇到错误时不退出  
-set +e  
+# set +e  
 # 清理之前的 git 缓存  
-git rm -r --cache * >/dev/null 2>&1 &  
+# git rm -r --cache * >/dev/null 2>&1 &  
 # 删除当前目录下的所有子目录  
-rm -rf `find ./* -maxdepth 0 -type d >/dev/null 2>&1  
+# rm -rf `find ./* -maxdepth 0 -type d >/dev/null 2>&1  
 
 # 默认分支为 openwrt  
 BRANCH=${1:-openwrt}  
 
 # 克隆 Git 仓库的函数  
 function git_clone() {  
-    git clone --depth 1 $1 $2  
+    git clone --depth 1 "$1" "$2"  
     if [ "$?" != 0 ]; then  
         echo "克隆出错: $1"  
         pid="$(ps -q $$)"  
         kill $pid  
+    else  
+        rm -rf "$2/.svn*" "$2/.git*"  
     fi  
-}  
+}
 
 # 稀疏克隆 Git 仓库的函数  
 function git_sparse_clone() {  
-    trap 'rm -rf "$tmpdir"' EXIT  # 确保临时文件夹的清理  
+    trap 'rm -rf "$tmpdir"' EXIT  
     branch="$1"   
     curl="$2"   
     shift 2  
@@ -56,8 +58,9 @@ function git_sparse_clone() {
     git sparse-checkout init --cone  
     git sparse-checkout set "$@"  
     mv -n "$@" "$rootdir/" || true  
+    rm -rf "$rootdir/$(basename "$curl" .git)/.svn*" "$rootdir/$(basename "$curl" .git)/.git*"   
     cd "$rootdir"  
-}  
+}
 
 # 移动文件夹的函数  
 function mvdir() {  
