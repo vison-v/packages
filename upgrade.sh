@@ -11,6 +11,7 @@
 # File name: upgrade.sh
 # Description: OpenWrt packages update script
 #====================================================================
+BRANCH=${1:-openwrt}
 
 function git_clone() {  
     git clone --depth 1 $1 $2  
@@ -62,14 +63,14 @@ git_sparse_clone main https://github.com/kiddin9/luci-app-tcpdump luci-app-tcpdu
 git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" luci-app-lucky lucky  
 
 # 更新lede分支  
-if [ "${{ matrix.branch }}" == "lede" ]; then  
+if [ "${{ BRANCH }}" == "lede" ]; then  
     git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush luci-theme-argon luci-app-argon-config  
     git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-quickstart quickstart luci-app-eqosplus \
     luci-app-oaf open-app-filter oaf luci-app-wrtbwmon wrtbwmon \
     luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl  
 
 # 更新openwrt分支  
-elif [ "${{ matrix.branch }}" == "openwrt" ]; then  
+elif [ "${BRANCH}" == "openwrt" ]; then  
     git_sparse_clone master https://github.com/immortalwrt/immortalwrt package/emortal/default-settings  
     # Uncomment the following lines for additional packages  
     # git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush \
@@ -80,7 +81,7 @@ elif [ "${{ matrix.branch }}" == "openwrt" ]; then
     # git_sparse_clone master https://github.com/immortalwrt/packages net/smartdns  
 
 # 更新immortalwrt分支  
-elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then  
+elif [ "${{ BRANCH }}" == "immortalwrt" ]; then  
     echo "暂无"  
 fi  
 
