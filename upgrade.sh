@@ -11,6 +11,10 @@
 # File name: upgrade.sh
 # Description: OpenWrt packages update script
 #====================================================================
+shopt -s extglob
+set +e
+git rm -r --cache * >/dev/null 2>&1 &
+rm -rf `find ./* -maxdepth 0 -type d` >/dev/null 2>&1
 BRANCH=${1:-openwrt}
 
 function git_clone() {  
@@ -29,7 +33,6 @@ function git_sparse_clone() {
     shift 2  
     rootdir="$PWD"  
     tmpdir="$(mktemp -d)" || exit 1  
-
     if [ ${#branch} -lt 10 ]; then  
         git clone -b "$branch" --depth 1 --filter=blob:none --sparse "$curl" "$tmpdir"  
         cd "$tmpdir"  
@@ -38,12 +41,10 @@ function git_sparse_clone() {
         cd "$tmpdir"  
         git checkout $branch  
     fi  
-
     if [ "$?" != 0 ]; then  
         echo "error on $curl"  
         exit 1  
     fi  
-
     git sparse-checkout init --cone  
     git sparse-checkout set "$@"  
     mv -n "$@" "$rootdir/" || true  
@@ -88,8 +89,7 @@ fi
 # Clean up  
 rm -rf ./*/.svn*  
 rm -rf ./*/.git*  
-find ./ -path '*/po/*' -type d ! -name 'zh-cn' ! -name 'zh_Hans' -print  
-# find ./ -path '*/po/*' -type d ! -name 'zh-cn' ! -name 'zh_Hans' -exec rm -rf {} +  
+find ./ -path '*/po/*' -type d ! -name 'zh-cn' ! -name 'zh_Hans' -exec rm -rf {} +  
 
 # End  
 exit 0
