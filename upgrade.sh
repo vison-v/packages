@@ -14,20 +14,20 @@
 
 BRANCH=${1:-openwrt}
 
-function _lang() {
-  if [ "${BRANCH}" == "openwrt" ] || [ "${BRANCH}" == "lede" ] || [ "${BRANCH}" == "immortalwrt" ]; then
-    for I in $(find $1 -name "zh-cn"); do
-      [ ! -d "${I}" ] && continue
-      [ -d "${I/zh-cn/zh_Hans}" ] && continue
-      cp -rf "${I}" "${I/zh-cn/zh_Hans}"
-    done
-  else
-    for I in $(find $1 -name "zh_Hans"); do
-      [ ! -d "${I}" ] && continue
-      [ -d "${I/zh_Hans/zh-cn}" ] && continue
-      cp -rf "${I}" "${I/zh_Hans/zh-cn}"
-    done
-  fi
+function _lang() {  
+  if [[ "${BRANCH}" == "openwrt" || "${BRANCH}" == "lede" || "${BRANCH}" == "immortalwrt" ]]; then  
+    find "$1" -type d -name "zh-cn" | while read -r I; do  
+      new_dir="${I/zh-cn/zh_Hans}"  
+      [ -d "$new_dir" ] && continue  
+      cp -rf "$I" "$new_dir"  
+    done  
+  else  
+    find "$1" -type d -name "zh_Hans" | while read -r I; do  
+      new_dir="${I/zh_Hans/zh-cn}"  
+      [ -d "$new_dir" ] && continue  
+      cp -rf "$I" "$new_dir"  
+    done  
+  fi  
 }
 
 function git_clone() {
