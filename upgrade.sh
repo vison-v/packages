@@ -62,12 +62,12 @@ function mvdir() {
 }  
 
 # 克隆需要的 Git 仓库  
-#git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./; rm -rf passwall  # luci-app-passwall  
-#git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./; rm -rf passwall2  # luci-app-passwall2  
-#git clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small  # 翻越长城app及依赖  
+git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./; rm -rf passwall  # luci-app-passwall  
+git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./; rm -rf passwall2  # luci-app-passwall2  
+git clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small  # 翻越长城app及依赖  
 
 # 稀疏克隆其他软件包  
-#git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" luci-app-lucky lucky  
+git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" luci-app-lucky lucky  
 
 # 更新 lede 分支  
 if [ "${BRANCH}" == "lede" ]; then  
