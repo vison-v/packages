@@ -206,7 +206,6 @@ sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' luci-app-gowebdav/M
 # git_clone https://github.com/fangli/openwrt-vm-tools
 
 # clean
-find ./ -path '*/po/*' -type d ! -name 'zh-cn' ! -name 'zh_Hans' -exec rm -rf {} +  
 rm -rf ./*/.svn*
 rm -rf ./*/.git*
 
