@@ -115,7 +115,7 @@ jobs:
         echo "暂无"
         fi
         ###############################################################################################################################################################
-        find ./luci-app-*/po -maxdepth 0 -type d ! -name 'zh-cn' ! -name 'zh_Hans' -exec rm -rf {} +  
+        find luci-app-*/po -maxdepth 0 -type d ! -name 'zh-cn' ! -name 'zh_Hans' -exec rm -rf {} +  
 
     - name: Apply
       run: |
