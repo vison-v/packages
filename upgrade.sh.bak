@@ -106,9 +106,10 @@ for e in luci-app-*/po/*; do
 done  
 
 # 清理工作目录  
+find ./ -path '*/po/*' -type d ! -name 'zh-cn' ! -name 'zh_Hans' -exec rm -rf {} +  
+rm -rf ./luci-app-*/po/{.svn*,.git*} 
 rm -rf ./*/.svn*  
 rm -rf ./*/.git*  
-find ./ -path '*/po/*' -type d ! -name 'zh-cn' ! -name 'zh_Hans' -exec rm -rf {} +  
 
 # 脚本结束  
 exit 0
