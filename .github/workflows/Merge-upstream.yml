@@ -8,11 +8,15 @@ on:
       - immortalwrt    
   schedule:  
     - cron: '0 */6 * * *'  # 每6小时执行一次  
-  workflow_dispatch:  
+  workflow_dispatch: 
+    inputs:
+      ssh:
+        description: 'ssh'
+        required: false
+        default: 'false'
   watch:  
     types: started  
-permissions:  
-  contents: write 
+
 jobs:  
   update-packages:  
     if: github.event.repository.owner.id == github.event.sender.id || !github.event.sender.id || github.event.sender.id == 71822883  
@@ -126,7 +130,11 @@ jobs:
              fi  
            done
          fi  
-
+       
+      - name: SSH connection to Actions
+        uses: kiddin9/debugger-action@master
+        if: github.event.inputs.ssh == 'true'
+     
       - name: Delete workflow runs  
         uses: Mattraks/delete-workflow-runs@main  
         continue-on-error: true  
