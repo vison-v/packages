@@ -128,7 +128,7 @@ jobs:
         run: |  
          if ls -d luci-app-*/po > /dev/null 2>&1; then   
            for dir in luci-app-*/po; do  
-            find "$dir" -mindepth 1 ! -name 'zh-*' -exec rm -rf {} +  
+            find "$dir" -mindepth 1 -name 'templates' -exec rm -rf {} +  
            done
          fi
           
