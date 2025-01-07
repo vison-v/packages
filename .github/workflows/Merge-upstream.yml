@@ -136,6 +136,7 @@ jobs:
             cp -r "$dir/zh_Hants" "$dir/zh-cn"  
           fi  
          done  
+         rm -rf `find ./luci-app-*/po/* -maxdepth 0 -type d ! -name 'zh-cn' ! -name 'zh_Hans'` >/dev/null 2>&1  
     
       - name: Clean up other directories  
         run: |  
