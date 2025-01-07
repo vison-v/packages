@@ -49,7 +49,7 @@ jobs:
           fi  
 
       - name: Repo packages  
-        if: env.updates == 'true'  
+        if: env.updates == 'false'  
         run: |  
           cd $GITHUB_WORKSPACE  
           if [ -f "upgrade.sh" ]; then  
@@ -59,7 +59,7 @@ jobs:
           fi  
 
       - name: Check for changes  
-        if: env.updates == 'true'  
+        if: env.updates == 'false'  
         run: |  
           if [ -n "$(git status -s | grep -v -w timestamp)" ]; then  
             echo "ischanges=true" >> $GITHUB_ENV  
