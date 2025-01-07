@@ -96,7 +96,7 @@ jobs:
             mv -n `find $1/* -maxdepth 0 -type d` ./  
             rm -rf $1  
           }  
-          ##################################################################################################################################################################################
+
           git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./; rm -rf passwall  
           git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./; rm -rf passwall2  
           git clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small  
@@ -117,7 +117,7 @@ jobs:
           elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then  
             echo "暂无"  
           fi  
-          ##################################################################################################################################################################################
+
       - name: Apply Changes  
         if: env.updates == 'false'  
         run: |  
