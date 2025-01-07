@@ -112,9 +112,9 @@ jobs:
       - name: Language Management  
         run: |  
          if ls -d luci-app-*/po > /dev/null 2>&1; then  
-           for dir in luci-app-*/po; do  
-             find "$dir" -mindepth 1 -maxdepth 1 ! -name 'zh_Hants' ! -name 'zh-cn' -exec rm -rf {} +  
-           done
+           #for dir in luci-app-*/po; do  
+           #  find "$dir" -mindepth 1 -maxdepth 1 ! -name 'zh_Hants' ! -name 'zh-cn' -exec rm -rf {} +  
+           #done
            for dir in $(ls -d luci-app-*/po); do  
              if [[ -d "$dir/zh-cn" && -d "$dir/zh_Hants" ]]; then  
                continue  
