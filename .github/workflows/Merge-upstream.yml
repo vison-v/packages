@@ -136,11 +136,15 @@ jobs:
              if [[ -d "$dir/zh_Hants" && ! -d "$dir/zh-cn" ]]; then  
                cp -r "$dir/zh_Hants" "$dir/zh-cn"  
              fi  
-           done    
-           for dir in $(ls -d luci-app-*/po); do  
-             find "$dir" -mindepth 1 -maxdepth 1 ! -name 'zh_Hants' ! -name 'zh-cn' -exec rm -rf {} +  
-           done
          fi  
+
+      - name: Clean up other directories  
+        run: |  
+         if ls -d luci-app-*/po > /dev/null 2>&1; then   
+           for dir in luci-app-*/po; do  
+            find "$dir" -mindepth 1 -maxdepth 1 ! -name 'zh_Hants' ! -name 'zh-cn' -exec rm -rf {} +  
+           done
+         fi
       
       - name: Delete workflow runs  
         uses: Mattraks/delete-workflow-runs@main  
