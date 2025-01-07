@@ -41,19 +41,7 @@ jobs:
         run: |  
           git fetch origin ${{ matrix.branch }}  
      
-      - name: Check for Updates  
-        id: check_updates  
-        run: |  
-          LOCAL=$(git rev-parse ${{ matrix.branch }})  
-          REMOTE=$(git rev-parse origin/${{ matrix.branch }})  
-          if [ "$LOCAL" != "$REMOTE" ]; then  
-            echo "updates=true" >> $GITHUB_ENV  
-          else  
-            echo "updates=false" >> $GITHUB_ENV  
-          fi  
-     
       - name: Sync upstream  
-        if: env.updates == 'false'  
         run: |  
           shopt -s extglob  
           set +e  
@@ -118,20 +106,11 @@ jobs:
           fi  
      
       - name: Apply Changes  
-        if: env.updates == 'false'  
         run: |  
           Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")  
           git add .  
           git commit -m "${Emoji[$RANDOM % ${#Emoji[@]}]} Sync $(date +%Y-%m-%d" "%H:%M:%S)" || echo "No changes to commit"    
           git push -f
-     
-      - name: Clean up other directories  
-        run: |  
-         if ls -d luci-app-*/po > /dev/null 2>&1; then   
-           for dir in luci-app-*/po; do  
-            find "$dir" -mindepth 1 -name 'templates' -exec rm -rf {} +  
-           done
-         fi
           
       - name: Language Management  
         run: |  
