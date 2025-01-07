@@ -108,13 +108,6 @@ jobs:
           elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then  
             echo "暂无"  
           fi  
-     
-      - name: Apply Changes  
-        run: |  
-          Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")  
-          git add .  
-          git commit -m "${Emoji[$RANDOM % ${#Emoji[@]}]} Sync $(date +%Y-%m-%d" "%H:%M:%S)" || echo "No changes to commit"    
-          git push -f
           
       - name: Language Management  
         run: |  
@@ -129,7 +122,17 @@ jobs:
                cp -r "$dir/zh_Hants" "$dir/zh-cn"  
              fi  
            done
-         fi  
+           for dir in luci-app-*/po; do  
+             find "$dir" -mindepth 1 -maxdepth 1 ! -name 'zh_Hants' ! -name 'zh-cn' -exec rm -rf {} +  
+           done
+         fi       
+      - name: Apply Changes  
+        run: |  
+          Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")  
+          git add .  
+          git commit -m "${Emoji[$RANDOM % ${#Emoji[@]}]} Sync $(date +%Y-%m-%d" "%H:%M:%S)" || echo "No changes to commit"    
+          git push -f
+
        
       - name: SSH connection to Actions
         uses: kiddin9/debugger-action@master
