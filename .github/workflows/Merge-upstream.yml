@@ -39,6 +39,7 @@ jobs:
       - name: Fetch Remote Changes  
         run: |  
           git fetch origin ${{ matrix.branch }}  
+     
       - name: Check for Updates  
         id: check_updates  
         run: |  
@@ -49,6 +50,7 @@ jobs:
           else  
             echo "updates=false" >> $GITHUB_ENV  
           fi  
+    
       - name: Sync upstream  
         if: env.updates == 'false'  
         run: |  
