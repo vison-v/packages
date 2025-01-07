@@ -7,18 +7,18 @@ on:
       - openwrt  
       - immortalwrt    
   schedule:  
-    - cron: 0 */6 * * *  
+    - cron: '0 */6 * * *'  # 每6小时执行一次  
   workflow_dispatch:  
   watch:  
     types: started  
 
 jobs:  
   update-packages:  
-    if: github.event.repository.owner.id == github.event.sender.id || ! github.event.sender.id || github.event.sender.id == 71822883  
+    if: github.event.repository.owner.id == github.event.sender.id || !github.event.sender.id || github.event.sender.id == 71822883  
     runs-on: ubuntu-latest  
     strategy:  
       matrix:  
-        branch: [lede, openwrt, immortalwrt]
+        branch: [lede, openwrt, immortalwrt]  
 
     steps:  
       - name: Checkout  
@@ -51,7 +51,7 @@ jobs:
             echo "updates=false" >> $GITHUB_ENV  
           fi  
 
-      - name: Syn upstream  
+      - name: Sync upstream  
         if: env.updates == 'true'  
         run: |  
           shopt -s extglob  
@@ -70,7 +70,8 @@ jobs:
           
           function git_sparse_clone() {  
             trap 'rm -rf "$tmpdir"' EXIT  
-            branch="$1" curl="$2" && shift 2  
+            branch="$1"; shift  
+            curl="$1"; shift  
             rootdir="$PWD"  
             tmpdir="$(mktemp -d)" || exit 1  
             if [ ${#branch} -lt 10 ]; then  
@@ -79,7 +80,7 @@ jobs:
             else  
               git clone --filter=blob:none --sparse "$curl" "$tmpdir"  
               cd "$tmpdir"  
-              git checkout $branch  
+              git checkout "$branch"  
             fi  
             if [ "$?" != 0 ]; then  
               echo "error on $curl"  
@@ -87,8 +88,8 @@ jobs:
             fi  
             git sparse-checkout init --cone  
             git sparse-checkout set "$@"  
-            mv -n $@ $rootdir/ || true  
-            cd $rootdir  
+            mv -n $@ "$rootdir/" || true  
+            cd "$rootdir"  
           }  
           
           function mvdir() {  
@@ -101,17 +102,16 @@ jobs:
           git clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small  
           
           git_sparse_clone main https://github.com/kiddin9/luci-app-tcpdump luci-app-tcpdump  
-          git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" luci-app-lucky lucky  
+          git_sparse_clone main https://github.com/gdy666/luci-app-lucky luci-app-lucky lucky  
 
           # 更新 lede 分支  
           if [ "${{ matrix.branch }}" == "lede" ]; then  
             git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush luci-theme-argon luci-app-argon-config  
             git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-quickstart quickstart luci-app-eqosplus luci-app-oaf open-app-filter oaf luci-app-wrtbwmon wrtbwmon luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl  
-            git_sparse_clone master "https://github.com/vison-v/lede" config scripts  
+            git_sparse_clone master https://github.com/vison-v/lede config scripts  
           # 更新 openwrt 分支  
           elif [ "${{ matrix.branch }}" == "openwrt" ]; then  
             git_sparse_clone master https://github.com/immortalwrt/immortalwrt package/emortal/default-settings  
-        
           # 更新 immortalwrt 分支  
           elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then  
             echo "暂无"  
@@ -122,8 +122,8 @@ jobs:
         run: |  
           Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")  
           git add .  
-          git commit -m "${Emoji[$[$RANDOM % ${#Emoji[@]}]]} Sync $(date +%Y-%m-%d" "%H:%M:%S)" || echo "No changes to commit"    
-          git push -f  
+          git commit -m "${Emoji[$RANDOM % ${#Emoji[@]}]} Sync $(date +%Y-%m-%d" "%H:%M:%S)" || echo "No changes to commit"    
+          git push -f
     
       - name: Language Management  
         run: |  
