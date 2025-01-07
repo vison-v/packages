@@ -2,30 +2,29 @@ name: Merge-upstream
 
 on:  
   push:  
-    paths:  
-      - '.github/workflows/upstream.yml'  
-      - '.gitignore'  
+    branches:  
+      - lede  
+      - openwrt  
+      - immortalwrt    
   schedule:  
     - cron: 0 */6 * * *  
   workflow_dispatch:  
-
   watch:  
     types: started  
 
 jobs:  
-  update:  
+  update-packages:  
+    if: github.event.repository.owner.id == github.event.sender.id || ! github.event.sender.id || github.event.sender.id == 71822883  
+    runs-on: ubuntu-latest  
     strategy:  
       matrix:  
-        branch: [lede, openwrt, immortalwrt]  
-    if: github.event.repository.owner.id == github.event.sender.id || ! github.event.sender.id || github.event.sender.id == 71822883  
-    runs-on: ubuntu-22.04  
+        branch: [lede, openwrt, immortalwrt]
 
     steps:  
       - name: Checkout  
         uses: actions/checkout@v2  
         with:  
           ref: ${{ matrix.branch }}  
-          fetch-depth: 0  
 
       - uses: de-vri-es/setup-git-credentials@v2  
         with:  
@@ -123,9 +122,29 @@ jobs:
         run: |  
           Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")  
           git add .  
-          git commit -m "${Emoji[$[$RANDOM % ${#Emoji[@]}]]} Sync $(date +%Y-%m-%d" "%H:%M:%S)"  
+          git commit -m "${Emoji[$[$RANDOM % ${#Emoji[@]}]]} Sync $(date +%Y-%m-%d" "%H:%M:%S)" || echo "No changes to commit"    
           git push -f  
     
+      - name: Language Management  
+        run: |  
+         for dir in luci-app-*/po; do  
+          if [[ -d "$dir/zh-cn" && ! -d "$dir/zh_Hants" ]]; then  
+            cp -r "$dir/zh-cn" "$dir/zh_Hants"  
+          fi  
+         done  
+
+         for dir in luci-app-*/po; do  
+          if [[ -d "$dir/zh_Hants" && ! -d "$dir/zh-cn" ]]; then  
+            cp -r "$dir/zh_Hants" "$dir/zh-cn"  
+          fi  
+         done  
+
+      - name: Clean up other directories  
+        run: |  
+         for dir in luci-app-*/po; do  
+          find "$dir" -mindepth 1 -maxdepth 1 ! -name 'zh_Hants' ! -name 'zh-cn' -exec rm -rf {} +  
+         done
+      
       - name: Delete workflow runs  
         uses: Mattraks/delete-workflow-runs@main  
         continue-on-error: true  
