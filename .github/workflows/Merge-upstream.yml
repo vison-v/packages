@@ -50,7 +50,7 @@ jobs:
           else  
             echo "updates=false" >> $GITHUB_ENV  
           fi  
-    
+     
       - name: Sync upstream  
         if: env.updates == 'false'  
         run: |  
@@ -106,7 +106,7 @@ jobs:
           if [ "${{ matrix.branch }}" == "lede" ]; then  
             git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush luci-theme-argon luci-app-argon-config  
             git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-quickstart quickstart luci-app-eqosplus luci-app-oaf open-app-filter oaf luci-app-wrtbwmon wrtbwmon luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl  
-
+         
           # 更新 openwrt 分支  
           elif [ "${{ matrix.branch }}" == "openwrt" ]; then  
             git_sparse_clone master https://github.com/immortalwrt/immortalwrt package/emortal/default-settings  
@@ -126,19 +126,17 @@ jobs:
     
       - name: Language Management  
         run: |  
-         #if ls -d luci-app-*/po > /dev/null 2>&1; then   
-           for dir in $(ls -d luci-app-*/po); do  
-             if [[ -d "$dir/zh-cn" && ! -d "$dir/zh_Hants" ]]; then  
-               cp -r "$dir/zh-cn" "$dir/zh_Hants"  
-             fi  
-           done  
-           for dir in $(ls -d luci-app-*/po); do  
-             if [[ -d "$dir/zh_Hants" && ! -d "$dir/zh-cn" ]]; then  
-               cp -r "$dir/zh_Hants" "$dir/zh-cn"  
-             fi  
-           done
-         #fi  
-
+         for dir in luci-app-*/po; do  
+          if [[ -d "$dir/zh-cn" && ! -d "$dir/zh_Hants" ]]; then  
+            cp -r "$dir/zh-cn" "$dir/zh_Hants"  
+          fi  
+         done  
+         for dir in luci-app-*/po; do  
+          if [[ -d "$dir/zh_Hants" && ! -d "$dir/zh-cn" ]]; then  
+            cp -r "$dir/zh_Hants" "$dir/zh-cn"  
+          fi  
+         done  
+    
       - name: Clean up other directories  
         run: |  
          for dir in luci-app-*/po; do  
