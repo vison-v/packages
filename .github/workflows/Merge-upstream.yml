@@ -140,7 +140,7 @@ jobs:
       - name: Clean up other directories  
         run: |  
          for dir in luci-app-*/po; do  
-          find "$dir" -mindepth 1 -maxdepth 1 ! -name 'zh_Hants' ! -name 'zh-cn' -exec rm -rf {} +  
+          ls -d "$pdir"/*/ | grep -v '/zh-cn/' | grep -v '/zh_Hans/' | xargs rm -rf
          done
       
       - name: Delete workflow runs  
