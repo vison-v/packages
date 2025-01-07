@@ -68,7 +68,7 @@ jobs:
           fi  
 
       - name: Commit and Push  
-        if: env.ischanges == 'true'  
+        if: env.ischanges == 'false'  
         run: |  
           Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")  
           git add .  
