@@ -115,17 +115,16 @@ jobs:
            for dir in luci-app-*/po; do  
              ls -d "$dir"/*/ | grep -v '/zh-cn/' | grep -v '/zh_Hans/' | xargs rm -rf
            done
-           for I in $(find luci-app-*/po -name "zh-cn"); do
-             [ ! -d "${I}" ] && continue
-             [ -d "${I/zh-cn/zh_Hans}" ] && continue
-             cp -rf "${I}" "${I/zh-cn/zh_Hans}"
-           done
-           else
-           for I in $(find luci-app-*/po -name "zh_Hans"); do
-             [ ! -d "${I}" ] && continue
-             [ -d "${I/zh_Hans/zh-cn}" ] && continue
-             cp -rf "${I}" "${I/zh_Hans/zh-cn}"
-           done
+           for dir in luci-app-*/po; do  
+             if [[ -d "$dir/zh-cn" && ! -d "$dir/zh_Hants" ]]; then  
+               cp -r "$dir/zh-cn" "$dir/zh_Hants"  
+             fi  
+           done  
+           for dir in luci-app-*/po; do  
+             if [[ -d "$dir/zh_Hants" && ! -d "$dir/zh-cn" ]]; then  
+               cp -r "$dir/zh_Hants" "$dir/zh-cn"  
+             fi  
+           done 
          fi       
      
       - name: Apply Changes  
