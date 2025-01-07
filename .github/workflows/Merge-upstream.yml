@@ -11,7 +11,8 @@ on:
   workflow_dispatch:  
   watch:  
     types: started  
-
+permissions:  
+  contents: write 
 jobs:  
   update-packages:  
     if: github.event.repository.owner.id == github.event.sender.id || !github.event.sender.id || github.event.sender.id == 71822883  
