@@ -113,23 +113,19 @@ jobs:
         run: |  
          if ls -d luci-app-*/po > /dev/null 2>&1; then  
            for dir in luci-app-*/po; do  
-             #find "$dir" -mindepth 1 -maxdepth 1 ! -name 'zh_Hants' ! -name 'zh-cn' -exec rm -rf {} +  
              ls -d "$dir"/*/ | grep -v '/zh-cn/' | grep -v '/zh_Hans/' | xargs rm -rf
            done
-           #for dir in luci-app-*/po; do   
-           #  for subdir in $(ls -1 "$dir" | grep -vE '^(zh_Hants|zh-cn)$'); do  
-           #    rm -rf "$dir/$subdir" && echo "Removed $dir/$subdir"  
-           #  done  
-           #done 
-           for dir in $(ls -d luci-app-*/po); do  
-             if [[ -d "$dir/zh-cn" && -d "$dir/zh_Hants" ]]; then  
-               continue  
-             elif [[ -d "$dir/zh-cn" && ! -d "$dir/zh_Hants" ]]; then  
-               cp -r "$dir/zh-cn" "$dir/zh_Hants"  
-             elif [[ -d "$dir/zh_Hants" && ! -d "$dir/zh-cn" ]]; then  
-               cp -r "$dir/zh_Hants" "$dir/zh-cn"  
-             fi  
-           done  
+           for I in $(find $1 -name "zh-cn"); do
+             [ ! -d "${I}" ] && continue
+             [ -d "${I/zh-cn/zh_Hans}" ] && continue
+             cp -rf "${I}" "${I/zh-cn/zh_Hans}"
+           done
+           else
+           for I in $(find $1 -name "zh_Hans"); do
+             [ ! -d "${I}" ] && continue
+             [ -d "${I/zh_Hans/zh-cn}" ] && continue
+             cp -rf "${I}" "${I/zh_Hans/zh-cn}"
+           done
          fi       
      
       - name: Apply Changes  
