@@ -136,6 +136,7 @@ jobs:
              if [[ -d "$dir/zh_Hants" && ! -d "$dir/zh-cn" ]]; then  
                cp -r "$dir/zh_Hants" "$dir/zh-cn"  
              fi  
+           done
          fi  
 
       - name: Clean up other directories  
