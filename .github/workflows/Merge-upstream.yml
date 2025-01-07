@@ -7,7 +7,7 @@ on:
       - openwrt  
       - immortalwrt    
   schedule:  
-    - cron: '0 */6 * * *'  
+    - cron: '0 */6 * * *'  # 每6小时执行一次  
   workflow_dispatch:  
   watch:  
     types: started  
@@ -39,7 +39,6 @@ jobs:
       - name: Fetch Remote Changes  
         run: |  
           git fetch origin ${{ matrix.branch }}  
-
       - name: Check for Updates  
         id: check_updates  
         run: |  
@@ -50,7 +49,6 @@ jobs:
           else  
             echo "updates=false" >> $GITHUB_ENV  
           fi  
-
       - name: Sync upstream  
         if: env.updates == 'false'  
         run: |  
@@ -96,14 +94,13 @@ jobs:
             mv -n `find $1/* -maxdepth 0 -type d` ./  
             rm -rf $1  
           }  
-
+         
           git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./; rm -rf passwall  
           git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./; rm -rf passwall2  
           git clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small  
           
           git_sparse_clone main https://github.com/kiddin9/luci-app-tcpdump luci-app-tcpdump  
           git_sparse_clone main https://github.com/gdy666/luci-app-lucky luci-app-lucky lucky  
-
           # 更新 lede 分支  
           if [ "${{ matrix.branch }}" == "lede" ]; then  
             git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush luci-theme-argon luci-app-argon-config  
@@ -117,13 +114,13 @@ jobs:
           elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then  
             echo "暂无"  
           fi  
-
+     
       - name: Apply Changes  
         if: env.updates == 'false'  
         run: |  
           Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")  
           git add .  
-          git commit -m "${Emoji[$RANDOM % ${#Emoji[@]}]} Sync $(date +%Y-%m-%d" "%H:%M:%S)"   
+          git commit -m "${Emoji[$RANDOM % ${#Emoji[@]}]} Sync $(date +%Y-%m-%d" "%H:%M:%S)" || echo "No changes to commit"    
           git push -f
     
       - name: Language Management  
@@ -133,13 +130,11 @@ jobs:
             cp -r "$dir/zh-cn" "$dir/zh_Hants"  
           fi  
          done  
-
          for dir in luci-app-*/po; do  
           if [[ -d "$dir/zh_Hants" && ! -d "$dir/zh-cn" ]]; then  
             cp -r "$dir/zh_Hants" "$dir/zh-cn"  
           fi  
          done  
-
       - name: Clean up other directories  
         run: |  
          for dir in luci-app-*/po; do  
