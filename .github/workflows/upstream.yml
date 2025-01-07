@@ -9,25 +9,35 @@ name: Repo packages
 
 on:  
   push:  
-  #schedule:  
-  #  - cron: 0 */6 * * *  
-  workflow_dispatch:  
+    branches:  
+      - lede  
+      - openwrt  
+      - immortalwrt    
+  schedule:  
+    - cron: '0 */6 * * *'  # 每6小时执行一次  
+  workflow_dispatch: 
+  watch:  
+    types: started  
 
 jobs:  
-  update:  
+  update-packages:  
+    if: github.event.repository.owner.id == github.event.sender.id || !github.event.sender.id || github.event.sender.id == 71822883  
+    runs-on: ubuntu-latest  
     strategy:  
       matrix:  
-        branch: [openwrt, lede, immortalwrt]  
+        branch: [lede, openwrt, immortalwrt]  
 
-    runs-on: ubuntu-latest  
     steps:  
       - name: Checkout  
         uses: actions/checkout@v2  
         with:  
           ref: ${{ matrix.branch }}  
-          fetch-depth: 0  
 
-      - name: Initialization environment  
+      - uses: de-vri-es/setup-git-credentials@v2  
+        with:  
+          credentials: https://vison-v:${{ secrets.REPO_TOKEN }}@github.com/  
+    
+      - name: Set git identity  
         run: |  
           git config --global user.email "github-actions[bot]@users.noreply.github.com"  
           git config --global user.name "github-actions[bot]"  
