@@ -126,7 +126,7 @@ jobs:
     
       - name: Language Management  
         run: |  
-         if ls -d luci-app-*/po > /dev/null 2>&1; then   
+         #if ls -d luci-app-*/po > /dev/null 2>&1; then   
            for dir in $(ls -d luci-app-*/po); do  
              if [[ -d "$dir/zh-cn" && ! -d "$dir/zh_Hants" ]]; then  
                cp -r "$dir/zh-cn" "$dir/zh_Hants"  
@@ -137,7 +137,7 @@ jobs:
                cp -r "$dir/zh_Hants" "$dir/zh-cn"  
              fi  
            done
-         fi  
+         #fi  
 
       - name: Clean up other directories  
         run: |  
