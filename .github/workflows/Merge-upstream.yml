@@ -100,7 +100,7 @@ jobs:
           #git clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small  
           
           #git_sparse_clone main https://github.com/kiddin9/luci-app-tcpdump luci-app-tcpdump  
-          git_sparse_clone main https://github.com/gdy666/luci-app-lucky luci-app-lucky lucky  
+          #git_sparse_clone main https://github.com/gdy666/luci-app-lucky luci-app-lucky lucky  
           # 更新 lede 分支  
           if [ "${{ matrix.branch }}" == "lede" ]; then  
             #git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush luci-theme-argon luci-app-argon-config  
