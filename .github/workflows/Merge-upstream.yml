@@ -52,7 +52,7 @@ jobs:
           fi  
 
       - name: Sync upstream  
-        if: env.updates == 'true'  
+        if: env.updates == 'false'  
         run: |  
           shopt -s extglob  
           set +e  
