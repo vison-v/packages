@@ -7,7 +7,7 @@ on:
       - openwrt  
       - immortalwrt    
   schedule:  
-    - cron: '0 */6 * * *'  # 每6小时执行一次  
+    - cron: '0 */6 * * *'  
   workflow_dispatch:  
   watch:  
     types: started  
@@ -96,7 +96,7 @@ jobs:
             mv -n `find $1/* -maxdepth 0 -type d` ./  
             rm -rf $1  
           }  
-
+          ##################################################################################################################################################################################
           git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./; rm -rf passwall  
           git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./; rm -rf passwall2  
           git clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small  
@@ -108,21 +108,22 @@ jobs:
           if [ "${{ matrix.branch }}" == "lede" ]; then  
             git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush luci-theme-argon luci-app-argon-config  
             git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-quickstart quickstart luci-app-eqosplus luci-app-oaf open-app-filter oaf luci-app-wrtbwmon wrtbwmon luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl  
-            git_sparse_clone master https://github.com/vison-v/lede config scripts  
+
           # 更新 openwrt 分支  
           elif [ "${{ matrix.branch }}" == "openwrt" ]; then  
             git_sparse_clone master https://github.com/immortalwrt/immortalwrt package/emortal/default-settings  
+         
           # 更新 immortalwrt 分支  
           elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then  
             echo "暂无"  
           fi  
-
+        ####################################################################################################################################################################################
       - name: Apply Changes  
         if: env.updates == 'false'  
         run: |  
           Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")  
           git add .  
-          git commit -m "${Emoji[$RANDOM % ${#Emoji[@]}]} Sync $(date +%Y-%m-%d" "%H:%M:%S)" || echo "No changes to commit"    
+          git commit -m "${Emoji[$RANDOM % ${#Emoji[@]}]} Sync $(date +%Y-%m-%d" "%H:%M:%S)"   
           git push -f
     
       - name: Language Management  
@@ -149,5 +150,5 @@ jobs:
         uses: Mattraks/delete-workflow-runs@main  
         continue-on-error: true  
         with:  
-          retain_days: 1  
-          keep_minimum_runs: 3
+          retain_days: 2  
+          keep_minimum_runs: 4
