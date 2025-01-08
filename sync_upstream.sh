@@ -3,9 +3,6 @@
 shopt -s extglob  
 set +e  
 
-# 定义仓库根目录  
-rootdir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"  
-
 # 清理缓存和目录  
 git rm -r --cached * >/dev/null 2>&1 &  
 rm -rf $(find ./ -maxdepth 0 -type d) >/dev/null 2>&1  
