@@ -45,9 +45,15 @@ jobs:
         run: |  
           git fetch origin ${{ matrix.branch }}  
 
-      - name: Sync upstream  
-        run: ./sync_upstream.sh ${{ matrix.branch }}  
-        shell: bash  
+      - name: Repo packages
+        run: |
+          cd $GITHUB_WORKSPACE
+          if [ -f "sync_upstream.sh" ]; then
+            chmod +x ./sync_upstream.sh && ./sync_upstream.sh ${{ matrix.branch }}
+          else
+            curl -skL https://raw.githubusercontent.com/vison-v/packages/main/sync_upstream.sh | bash -s ${{ matrix.branch }}
+          fi
+
 
       - name: Language Management  
         run: |  
