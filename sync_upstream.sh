@@ -3,6 +3,9 @@
 shopt -s extglob  
 set +e  
 
+# 定义仓库根目录  
+rootdir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"  
+
 # 清理缓存和目录  
 git rm -r --cached * >/dev/null 2>&1 &  
 rm -rf $(find ./ -maxdepth 0 -type d) >/dev/null 2>&1  
@@ -22,19 +25,21 @@ function git_sparse_clone() {
     trap 'rm -rf "$tmpdir"' EXIT  
     branch="$1"; shift  
     curl="$1"; shift  
-    rootdir="$PWD"  
     tmpdir="$(mktemp -d)" || exit 1  
+
     if [ ${#branch} -lt 10 ]; then  
         git clone -b "$branch" --depth 1 --filter=blob:none --sparse "$curl" "$tmpdir"  
     else  
         git clone --filter=blob:none --sparse "$curl" "$tmpdir"  
         cd "$tmpdir" || exit 1  
         git checkout "$branch"  
-    fi    
+    fi  
+    
     if [ "$?" -ne 0 ]; then  
         echo "Error on $curl"  
         exit 1  
     fi  
+
     git sparse-checkout init --cone  
     git sparse-checkout set "$@"  
     mv -n "$@" "$rootdir/" || true  
@@ -70,4 +75,8 @@ elif [ "${1}" == "openwrt" ]; then
 # 更新 immortalwrt 分支  
 elif [ "${1}" == "immortalwrt" ]; then  
     echo "暂无"  
-fi
+fi  
+
+# 调用 sync_upstream.sh  
+# 在需要的位置调用这个函数来执行更新同级目录下的脚本  
+# run_sync_upstream "$1"   # 根据需要解开注释
