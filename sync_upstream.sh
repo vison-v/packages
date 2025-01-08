@@ -1,40 +1,33 @@
 #!/bin/bash  
-
+set -e  # 遇到错误时退出  
 shopt -s extglob  
-set +e  
 
 # 清理缓存和目录  
 git rm -r --cached * >/dev/null 2>&1 &  
-rm -rf $(find ./ -maxdepth 0 -type d) >/dev/null 2>&1  
+rm -rf $(find ./* -maxdepth 0 -type d) >/dev/null 2>&1  
 
-# 克隆 Git 仓库  
 function git_clone() {  
     git clone --depth 1 "$1" "$2"  
     if [ "$?" -ne 0 ]; then  
-        echo "Error cloning $1"  
-        pid="$(ps -q $$)"  
-        kill "$pid"  
+        echo "error on $1"  
+        exit 1  
     fi  
 }  
 
-# 稀疏克隆 Git 仓库  
 function git_sparse_clone() {  
     trap 'rm -rf "$tmpdir"' EXIT  
     branch="$1"; shift  
     curl="$1"; shift  
+    rootdir="$PWD"  
     tmpdir="$(mktemp -d)" || exit 1  
 
     if [ ${#branch} -lt 10 ]; then  
         git clone -b "$branch" --depth 1 --filter=blob:none --sparse "$curl" "$tmpdir"  
+        cd "$tmpdir" || exit 1  
     else  
         git clone --filter=blob:none --sparse "$curl" "$tmpdir"  
         cd "$tmpdir" || exit 1  
         git checkout "$branch"  
-    fi  
-    
-    if [ "$?" -ne 0 ]; then  
-        echo "Error on $curl"  
-        exit 1  
     fi  
 
     git sparse-checkout init --cone  
@@ -43,7 +36,6 @@ function git_sparse_clone() {
     cd "$rootdir" || exit 1  
 }  
 
-# 移动目录  
 function mvdir() {  
     mv -n $(find "$1"/* -maxdepth 0 -type d) ./  
     rm -rf "$1"  
@@ -61,19 +53,15 @@ git clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,lu
 git_sparse_clone main https://github.com/gdy666/luci-app-lucky luci-app-lucky lucky  
 
 # 更新 lede 分支  
-if [ "${1}" == "lede" ]; then  
+if [ "$1" == "lede" ]; then  
     git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-wechatpush luci-theme-argon luci-app-argon-config  
     git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-quickstart quickstart luci-app-eqosplus luci-app-oaf open-app-filter oaf luci-app-wrtbwmon wrtbwmon luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl  
 
 # 更新 openwrt 分支  
-elif [ "${1}" == "openwrt" ]; then  
+elif [ "$1" == "openwrt" ]; then  
     git_sparse_clone master https://github.com/immortalwrt/immortalwrt package/emortal/default-settings  
 
 # 更新 immortalwrt 分支  
-elif [ "${1}" == "immortalwrt" ]; then  
+elif [ "$1" == "immortalwrt" ]; then  
     echo "暂无"  
-fi  
-
-# 调用 sync_upstream.sh  
-# 在需要的位置调用这个函数来执行更新同级目录下的脚本  
-# run_sync_upstream "$1"   # 根据需要解开注释
+fi
