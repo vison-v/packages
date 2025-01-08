@@ -1,4 +1,4 @@
-name: Merge-upstream-test  
+name: Merge-upstream  
 
 on:  
   push:  
@@ -11,7 +11,7 @@ on:
   workflow_dispatch:   
     inputs:  
       ssh:  
-        description: 'Enable SSH connection'  
+        description: 'ssh'  
         required: false  
         default: 'false'  
   watch:  
@@ -34,33 +34,28 @@ jobs:
       - uses: de-vri-es/setup-git-credentials@v2  
         with:  
           credentials: https://vison-v:${{ secrets.REPO_TOKEN }}@github.com/  
-
+    
       - name: Set git identity  
         run: |  
           git config --global user.email "github-actions[bot]@users.noreply.github.com"  
           git config --global user.name "github-actions[bot]"  
           sudo timedatectl set-timezone "Asia/Shanghai"  
-
+    
       - name: Fetch Remote Changes  
         run: |  
           git fetch origin ${{ matrix.branch }}  
 
-      - name: Repo packages
-        run: |
-          cd $GITHUB_WORKSPACE
-          if [ -f "sync_upstream.sh" ]; then
-            chmod +x ./sync_upstream.sh && ./sync_upstream.sh ${{ matrix.branch }}
-          else
-            curl -skL https://raw.githubusercontent.com/vison-v/packages/main/sync_upstream.sh | bash -s ${{ matrix.branch }}
-          fi
-
+      - name: Sync upstream  
+        run: |  
+          chmod +x ./sync_upstream.sh  # 确保脚本可执行  
+          ./sync_upstream.sh ${{ matrix.branch }}  # 传递当前分支  
 
       - name: Language Management  
         run: |  
-          if ls -d luci-app-*/po > /dev/null 2>&1; then  
-            for dir in luci-app-*/po; do  
-              ls -d "$dir"/*/ | grep -v '/zh-cn/' | grep -v '/zh_Hans/' | xargs rm -rf  
-            done  
+         if ls -d luci-app-*/po > /dev/null 2>&1; then  
+           for dir in luci-app-*/po; do  
+             ls -d "$dir"/*/ | grep -v '/zh-cn/' | grep -v '/zh_Hans/' | xargs rm -rf  
+           done  
             for e in $(ls -d luci-app-*/po); do  
               if [[ -d $e/zh-cn && ! -d $e/zh_Hans ]]; then  
                 cp -rf $e/zh-cn $e/zh_Hans 2>/dev/null  
@@ -68,22 +63,11 @@ jobs:
                 cp -rf $e/zh_Hans $e/zh-cn 2>/dev/null  
               fi  
             done  
-          fi       
+         fi       
 
       - name: Apply Changes  
         run: |  
           Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")  
           git add .  
           git commit -m "${Emoji[$RANDOM % ${#Emoji[@]}]} Sync $(date +%Y-%m-%d" "%H:%M:%S)" || echo "No changes to commit"    
-          git push -f  
-
-      - name: SSH connection to Actions  
-        uses: kiddin9/debugger-action@master  
-        if: github.event.inputs.ssh == 'true'  
-
-      - name: Delete workflow runs  
-        uses: Mattraks/delete-workflow-runs@main  
-        continue-on-error: true  
-        with:  
-          retain_days: 2  
-          keep_minimum_runs: 4
+          git push -f
