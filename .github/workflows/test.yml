@@ -47,8 +47,8 @@ jobs:
 
       - name: Sync upstream  
         run: |  
-          chmod +x ./sync_upstream.sh  # 确保脚本可执行  
-          ./sync_upstream.sh ${{ matrix.branch }}  # 传递当前分支  
+          chmod +x sync_upstream.sh  # 确保脚本可执行  
+          sync_upstream.sh ${{ matrix.branch }}  # 传递当前分支  
 
       - name: Language Management  
         run: |  
