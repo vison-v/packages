@@ -103,6 +103,7 @@ jobs:
           # 更新 openwrt 分支  
           elif [ "${{ matrix.branch }}" == "openwrt" ]; then  
             git_sparse_clone master https://github.com/immortalwrt/immortalwrt package/emortal/default-settings  
+            git_sparse_clone master https://github.com/immortalwrt/packages lang  
          
           # 更新 immortalwrt 分支  
           elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then  
