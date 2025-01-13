@@ -105,7 +105,7 @@ jobs:
           # 更新 openwrt 分支  
           elif [ "${{ matrix.branch }}" == "openwrt" ]; then  
             git clone main "https://github.com/kenzok8/golang" golang  
-            it_sparse_clone master "https://github.com/immortalwrt/immortalwrt" package/emortal/default-settings  
+            git_sparse_clone master "https://github.com/immortalwrt/immortalwrt" package/emortal/default-settings  
             git_sparse_clone main "https://github.com/kiddin9/kwrt-packages" luci-app-quickstart quickstart luci-app-eqosplus luci-app-oaf open-app-filter oaf luci-app-vlmcsd vlmcsd \
             luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl  luci-app-wechatpush luci-theme-argon luci-app-argon-config luci-app-zerotier \
             luci-app-unblockneteasemusic UnblockNeteaseMusic luci-app-syncdial luci-app-tcpdump luci-app-socat luci-app-samba4 luci-app-cifs-mount
