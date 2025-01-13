@@ -97,14 +97,14 @@ jobs:
           git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" luci-app-lucky lucky  
           # 更新 lede 分支  
           if [ "${{ matrix.branch }}" == "lede" ]; then  
-            git clone https://github.com/kenzok8/golang golang && mv -n golang ./; rm -rf golang    
+            git clone https://github.com/kenzok8/golang.git golang     
             git_sparse_clone master "https://github.com/openwrt/luci" applications/luci-app-ttyd applications/luci-app-smartdns
             git_sparse_clone main "https://github.com/kiddin9/kwrt-packages" luci-app-quickstart quickstart luci-app-eqosplus luci-app-oaf open-app-filter oaf luci-app-wrtbwmon wrtbwmon \
             luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl luci-app-wechatpush luci-theme-argon luci-app-argon-config 
          
           # 更新 openwrt 分支  
           elif [ "${{ matrix.branch }}" == "openwrt" ]; then  
-            git clone https://github.com/kenzok8/golang golang && mv -n golang ./; rm -rf golang  
+            git clone https://github.com/kenzok8/golang.git golang  
             git_sparse_clone master "https://github.com/immortalwrt/immortalwrt" package/emortal/default-settings  
             git_sparse_clone main "https://github.com/kiddin9/kwrt-packages" luci-app-quickstart quickstart luci-app-eqosplus luci-app-oaf open-app-filter oaf luci-app-vlmcsd vlmcsd \
             luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl  luci-app-wechatpush luci-theme-argon luci-app-argon-config luci-app-zerotier \
