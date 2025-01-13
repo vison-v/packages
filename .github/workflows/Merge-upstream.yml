@@ -93,8 +93,8 @@ jobs:
           git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./; rm -rf passwall  
           git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./; rm -rf passwall2  
           git_clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small 
-          git clone https://github.com/kenzok8/golang
-          
+
+          git_sparse_clone main https://github.com/kenzok8/golang golang            
           git_sparse_clone main https://github.com/gdy666/luci-app-lucky luci-app-lucky lucky  
           # 更新 lede 分支  
           if [ "${{ matrix.branch }}" == "lede" ]; then  
