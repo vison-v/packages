@@ -106,7 +106,7 @@ jobs:
             git_sparse_clone master https://github.com/immortalwrt/packages lang/golang  
             git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-quickstart quickstart luci-app-eqosplus luci-app-oaf open-app-filter oaf luci-app-vlmcsd vlmcsd \
             luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl  luci-app-wechatpush luci-theme-argon luci-app-argon-config luci-app-zerotier \
-            luci-app-unblockneteasemusic unblockneteasemusic luci-app-syncdial luci-app-tcpdump luci-app-socat 
+            luci-app-unblockneteasemusic unblockneteasemusic luci-app-syncdial luci-app-tcpdump luci-app-socat luci-app-usb-printer luci-app-samba4 luci-app-cifs-mount
          
           # 更新 immortalwrt 分支  
           elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then  
