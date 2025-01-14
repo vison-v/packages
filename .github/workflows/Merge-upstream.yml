@@ -121,14 +121,15 @@ jobs:
            for dir in luci-app-*/po; do  
              ls -d "$dir"/*/ | grep -v '/zh-cn/' | grep -v '/zh_Hans/' | xargs rm -rf
            done
-            for e in $(ls -d luci-app-*/po); do
-              if [[ -d $e/zh-cn &&! -d $e/zh_Hans ]]; then
-                cp -rf $e/zh-cn $e/zh_Hans 2>/dev/null
-              elif [[ -d $e/zh_Hans &&! -d $e/zh-cn ]]; then
-                cp -rf $e/zh_Hans $e/zh-cn 2>/dev/null
-              fi
-            done
-         fi       
+         fi   
+         for I in $(find . -type d -name "zh-cn"); do  
+           [ -d "${I/zh-cn/zh_Hans}" ] && continue  
+           cp -rf "$I" "${I/zh-cn/zh_Hans}"  
+         done  
+         for I in $(find . -type d -name "zh_Hans"); do  
+           [ -d "${I/zh_Hans/zh-cn}" ] && continue  
+           cp -rf "$I" "${I/zh_Hans/zh-cn}"  
+         done
      
       - name: Apply Changes  
         run: |  
