@@ -90,30 +90,29 @@ jobs:
             rm -rf $1  
           }  
          
-          #git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./; rm -rf passwall  
-          #git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./; rm -rf passwall2  
-          #git_clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small 
+          git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./; rm -rf passwall  
+          git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./; rm -rf passwall2  
+          git_clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small 
       
-          #git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" luci-app-lucky lucky  
+          git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" luci-app-lucky lucky  
           # 更新 lede 分支  
           if [ "${{ matrix.branch }}" == "lede" ]; then  
-            #git_sparse_clone master "https://github.com/immortalwrt/packages.git" lang/golang     
-            #git_sparse_clone master "https://github.com/openwrt/luci" applications/luci-app-ttyd applications/luci-app-smartdns
-            #git_sparse_clone main "https://github.com/kiddin9/kwrt-packages" luci-app-quickstart quickstart luci-app-eqosplus luci-app-oaf open-app-filter oaf luci-app-wrtbwmon wrtbwmon \
-            #luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl luci-app-wechatpush luci-theme-argon luci-app-argon-config 
-            echo "-"
+            git_sparse_clone master "https://github.com/immortalwrt/packages.git" lang/golang     
+            git_sparse_clone master "https://github.com/openwrt/luci" applications/luci-app-ttyd applications/luci-app-smartdns
+            git_sparse_clone main "https://github.com/kiddin9/kwrt-packages" luci-app-quickstart quickstart luci-app-eqosplus luci-app-oaf open-app-filter oaf luci-app-wrtbwmon wrtbwmon \
+            luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl luci-app-wechatpush luci-theme-argon luci-app-argon-config 
+
           # 更新 openwrt 分支  
           elif [ "${{ matrix.branch }}" == "openwrt" ]; then  
-            #git_sparse_clone master "https://github.com/immortalwrt/packages.git" lang/golang  
-            #git_sparse_clone master "https://github.com/coolsnowwolf/lede" package/lean/default-settings  
-            #git_sparse_clone main "https://github.com/kiddin9/kwrt-packages" luci-app-quickstart quickstart luci-app-eqosplus luci-app-oaf open-app-filter oaf luci-app-vlmcsd vlmcsd \
-            #luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl  luci-app-wechatpush luci-theme-argon luci-app-argon-config luci-app-zerotier \
-            #luci-app-unblockneteasemusic UnblockNeteaseMusic luci-app-syncdial luci-app-tcpdump luci-app-socat luci-app-samba4 luci-app-cifs-mount
-            echo "-"
+            git_sparse_clone master "https://github.com/immortalwrt/packages.git" lang/golang  
+            git_sparse_clone master "https://github.com/coolsnowwolf/lede" package/lean/default-settings  
+            git_sparse_clone main "https://github.com/kiddin9/kwrt-packages" luci-app-quickstart quickstart luci-app-eqosplus luci-app-oaf open-app-filter oaf luci-app-vlmcsd vlmcsd \
+            luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl  luci-app-wechatpush luci-theme-argon luci-app-argon-config luci-app-zerotier \
+            luci-app-unblockneteasemusic UnblockNeteaseMusic luci-app-syncdial luci-app-tcpdump luci-app-socat luci-app-samba4 luci-app-cifs-mount
+
           # 更新 immortalwrt 分支  
           elif [ "${{ matrix.branch }}" == "immortalwrt" ]; then  
-            echo "-"
-            #git_sparse_clone main "https://github.com/kiddin9/kwrt-packages.git" luci-app-eqosplus luci-app-tcpdump luci-app-control-webrestriction luci-app-control-weburl
+            git_sparse_clone main "https://github.com/kiddin9/kwrt-packages.git" luci-app-eqosplus luci-app-tcpdump luci-app-control-webrestriction luci-app-control-weburl
           fi  
           
       - name: Language Management  
