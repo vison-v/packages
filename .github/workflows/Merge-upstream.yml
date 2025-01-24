@@ -90,11 +90,10 @@ jobs:
             rm -rf $1  
           }  
          
-          git_clone https://github.com/fw876/helloworld helloworld && mvdir helloworld  
           git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./; rm -rf passwall  
           git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./; rm -rf passwall2  
           git_clone https://github.com/xiaorouji/openwrt-passwall-packages passwaii && rm -rf passwaii/.github && mvdir passwaii  
-          git_clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2,luci-app-ssr-plus} && mv -n small/luci-app-* ./; rm -rf small  
+          git_clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small  
           git_clone https://github.com/kenzok8/golang lang && mkdir golang && mv -n `find lang/* -maxdepth 0` ./golang; rm -rf lang  
       
           git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" luci-app-lucky lucky  
