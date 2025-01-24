@@ -95,11 +95,12 @@ jobs:
           git_clone https://github.com/xiaorouji/openwrt-passwall-packages passwaii && rm -rf passwaii/.github && mvdir passwaii  
           git_clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2,luci-app-ssr-plus} && mv -n small/luci-app-* ./; rm -rf small  
           git_clone https://github.com/fw876/helloworld helloworld && mvdir helloworld  
+          git_clone https://github.com/kenzok8/golang golang
       
           git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" luci-app-lucky lucky  
           # 更新 lede 分支  
           if [ "${{ matrix.branch }}" == "lede" ]; then  
-            git_sparse_clone master "https://github.com/immortalwrt/packages.git" lang/golang     
+            #git_sparse_clone master "https://github.com/immortalwrt/packages.git" lang/golang     
             git_sparse_clone master "https://github.com/openwrt/luci" applications/luci-app-ttyd applications/luci-app-smartdns
             git_sparse_clone main "https://github.com/kiddin9/kwrt-packages" luci-app-quickstart quickstart luci-app-eqosplus luci-app-oaf open-app-filter oaf luci-app-wrtbwmon wrtbwmon \
             luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl luci-app-wechatpush luci-theme-argon luci-app-argon-config 
