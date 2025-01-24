@@ -132,6 +132,18 @@ jobs:
            cp -rf "$I" "${I/zh_Hans/zh-cn}"  
          done
      
+      - name: Replace include in Makefile  
+        run: |  
+          replace_include() {  
+              local filepath="$1"  
+              if grep -q 'include ../../luci.mk' "$filepath"; then  
+                  sed -i 's|include ../../luci.mk|include $(TOPDIR)/feeds/luci/luci.mk|' "$filepath"  
+                  echo "Replaced in: $filepath"  
+              fi  
+          }  
+          export -f replace_include  
+          find . -name "Makefile" -exec bash -c 'replace_include "$0"' {} \;  
+               
       - name: Apply Changes  
         run: |  
           Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")  
