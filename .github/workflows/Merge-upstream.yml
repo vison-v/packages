@@ -90,7 +90,7 @@ jobs:
             rm -rf $1  
           }  
          
-          @git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./; rm -rf passwall  
+          #git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./; rm -rf passwall  
           #git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./; rm -rf passwall2  
           #git_clone https://github.com/xiaorouji/openwrt-passwall-packages passwaii && rm -rf passwaii/.github && mvdir passwaii  
           git_clone https://github.com/kenzok8/small && mvdir small  
