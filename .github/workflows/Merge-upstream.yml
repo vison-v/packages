@@ -95,12 +95,14 @@ jobs:
           git_clone https://github.com/xiaorouji/openwrt-passwall-packages passwaii && rm -rf passwaii/.github && mvdir passwaii  
           git_clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small  
           git_clone https://github.com/kenzok8/golang lang && mkdir golang && mv -n `find lang/* -maxdepth 0` ./golang; rm -rf lang  
+          git_clone https://github.com/pymumu/openwrt-smartdns && mkdir smartdns && mv -n `find openwrt-smartdns/* -maxdepth 0` ./smartdns; rm -rf openwrt-smartdns  
+          git_clone https://github.com/pymumu/luci-app-smartdns smadns && mkdir luci-app-smartdns && mv -n `find smadns/* -maxdepth 0` ./luci-app-smartdns; rm -rf smadns  
       
           git_sparse_clone main "https://github.com/gdy666/luci-app-lucky" luci-app-lucky lucky  
           git_sparse_clone main "https://github.com/kiddin9/kwrt-packages.git" luci-app-tcpdump
           # 更新 lede 分支  
           if [ "${{ matrix.branch }}" == "lede" ]; then  
-            git_sparse_clone master "https://github.com/openwrt/luci" applications/luci-app-ttyd applications/luci-app-smartdns
+            git_sparse_clone master "https://github.com/openwrt/luci" applications/luci-app-ttyd  
             git_sparse_clone main "https://github.com/kiddin9/kwrt-packages" luci-app-quickstart quickstart luci-app-eqosplus luci-app-oaf open-app-filter oaf luci-app-wrtbwmon wrtbwmon \
             luci-app-control-timewol luci-app-control-webrestriction luci-app-control-weburl luci-app-wechatpush luci-theme-argon luci-app-argon-config 
 
