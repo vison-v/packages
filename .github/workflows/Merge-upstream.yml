@@ -150,7 +150,8 @@ jobs:
         run: |  
           Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")  
           UPSTREAM_BRANCH="origin/${{ matrix.branch }}" 
-          LATEST_COMMIT_MSG=$(git log -1 --pretty=%B "$UPSTREAM_BRANCH") || true  
+          git fetch origin ${{ matrix.branch }}  
+          LATEST_COMMIT_MSG=$(git log -1 --pretty=%B "$UPSTREAM_BRANCH") || true   
           git add .  
           git commit -m "${Emoji[$RANDOM % ${#Emoji[@]}]} Sync - $LATEST_COMMIT_MSG"|| true    
           git push -f
