@@ -93,7 +93,7 @@ jobs:
           git_clone https://github.com/xiaorouji/openwrt-passwall passwall && mv -n passwall/luci-app-passwall ./; rm -rf passwall  
           git_clone https://github.com/xiaorouji/openwrt-passwall2 passwall2 && mv -n passwall2/luci-app-passwall2 ./; rm -rf passwall2  
           git_clone https://github.com/xiaorouji/openwrt-passwall-packages passwaii && rm -rf passwaii/{geoview,.github} && mvdir passwaii  
-          #git_clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small  
+          git_clone https://github.com/kenzok8/small && rm -rf small/{luci-app-passwall,luci-app-passwall2} && mvdir small  
           git_clone https://github.com/kenzok8/golang lang && mkdir golang && mv -n `find lang/* -maxdepth 0` ./golang; rm -rf lang  
           git_clone https://github.com/pymumu/openwrt-smartdns && mkdir smartdns && mv -n `find openwrt-smartdns/* -maxdepth 0` ./smartdns; rm -rf openwrt-smartdns  
           git_clone https://github.com/pymumu/luci-app-smartdns smart && mkdir luci-app-smartdns && mv -n `find smart/* -maxdepth 0` ./luci-app-smartdns; rm -rf smart  
@@ -150,7 +150,7 @@ jobs:
         run: |  
           Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")  
           git add .  
-          #git commit -m "${Emoji[$RANDOM % ${#Emoji[@]}]} Sync $(date +%Y-%m-%d" "%H:%M:%S)" || echo "No changes to commit"    
+          git commit -m "${Emoji[$RANDOM % ${#Emoji[@]}]} Sync $(date +%Y-%m-%d" "%H:%M:%S)" || echo "No changes to commit"    
           git push -f
        
       - name: SSH connection to Actions
