@@ -150,9 +150,8 @@ jobs:
         run: |  
           Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")  
           git add .  
-          original_message=$(git log -1 --pretty=format:"%s") # 保留原始提交信息  
-          git commit -m "${Emoji[$RANDOM % ${#Emoji[@]}]} Sync: ${original_message} - $(date +%Y-%m-%d" "%H:%M:%S)" || echo "No changes to commit"  
-          git push -f  
+          git commit -m "${Emoji[$RANDOM % ${#Emoji[@]}]} Sync $(date +%Y-%m-%d" "%H:%M:%S)" || echo "No changes to commit"    
+          git push -f
        
       - name: SSH connection to Actions
         uses: kiddin9/debugger-action@master
