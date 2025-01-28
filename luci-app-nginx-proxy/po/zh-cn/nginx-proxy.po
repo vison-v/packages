@@ -1,0 +1,56 @@
+msgid "Nginx Reverse Proxy"
+msgstr "Nginx 反向代理"
+
+msgid "Proxy Settings"
+msgstr "代理设置"
+
+msgid "Server Name"
+msgstr "服务器名称"
+
+msgid "Listen Port"
+msgstr "监听端口"
+
+msgid "Proxy Pass URL"
+msgstr "代理目标URL"
+
+msgid "Enable SSL"
+msgstr "启用SSL"
+
+msgid "SSL Listen Port"
+msgstr "SSL监听端口"
+
+msgid "SSL Certificate Path"
+msgstr "SSL证书路径"
+
+msgid "SSL Certificate Key Path"
+msgstr "SSL证书密钥路径"
+
+msgid "View Logs"
+msgstr "查看日志"
+
+msgid "Clear Logs"
+msgstr "清空日志"
+
+msgid "Log file not found or is empty."
+msgstr "日志文件未找到或为空。"
+
+msgid "Failed to open Nginx configuration file."
+msgstr "无法打开Nginx配置文件。"
+
+msgid "Failed to restart Nginx."
+msgstr "无法重启Nginx服务。"
+
+msgid "ACME Configuration"
+msgstr "ACME配置"
+
+msgid "Domain Name"
+msgstr "域名"
+
+msgid "Email Address"
+msgstr "电子邮件地址"
+
+msgid "Certificate Path"
+msgstr "证书路径"
+
+msgid "Private Key Path"
+msgstr "私钥路径"

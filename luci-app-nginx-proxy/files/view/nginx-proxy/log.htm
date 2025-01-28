@@ -1,0 +1,15 @@
+<%+header%>
+
+<h2><%:Nginx Proxy Logs%></h2>
+<div class="cbi-section">
+    <pre><%=log_content%></pre>
+</div>
+
+<div class="cbi-page-actions">
+    <form class="inline" method="post" action="<%=url('admin/services/nginx-proxy/log/clear')%>">
+        <input type="hidden" name="token" value="<%=token%>" />
+        <input class="cbi-button cbi-button-reset" type="submit" value="<%:Clear Logs%>" />
+    </form>
+</div>
+
+<%+footer%>
