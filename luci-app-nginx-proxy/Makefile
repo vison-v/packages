@@ -11,7 +11,7 @@ define Package/luci-app-nginx-proxy
   CATEGORY:=LuCI
   SUBMENU:=3. Applications
   TITLE:=Nginx Reverse Proxy Configuration
-  DEPENDS:=+luci +nginx +luci-i18n-base-zh-cn +acme
+  DEPENDS:=+luci +nginx +acme
 endef
 
 define Package/luci-app-nginx-proxy/description
