@@ -1,0 +1,59 @@
+msgid "Nginx Reverse Proxy Configuration"  
+msgstr "Nginx 反向代理配置"  
+
+msgid "Reverse Proxy Settings"  
+msgstr "反向代理设置"  
+
+msgid "Server Name (e.g., example.com)"  
+msgstr "服务器名称 (例如，example.com)"  
+
+msgid "Enter your domain name or server name"  
+msgstr "输入您的域名或服务器名称"  
+
+msgid "Listen Address (e.g., 80 or [::]:80)"  
+msgstr "监听地址 (例如，80 或 [::]:80)"  
+
+msgid "Enter the listening port, e.g., 80 for HTTP, 443 for HTTPS, or [::]:80 for IPv6"  
+msgstr "输入监听端口，例如，HTTP 的 80，HTTPS 的 443，或者 IPv6 的 [::]:80"  
+
+msgid "Proxy Address (e.g., http://localhost:8080)"  
+msgstr "代理地址 (例如，http://localhost:8080)"  
+
+msgid "Enter the backend server address, e.g., http://127.0.0.1:8080"  
+msgstr "输入后端服务器地址，例如，http://127.0.0.1:8080"  
+
+msgid "Enable SSL"  
+msgstr "启用 SSL"  
+
+msgid "SSL Certificate Configuration"  
+msgstr "SSL 证书配置"  
+
+msgid "Certificate Path (e.g., /etc/nginx/ssl/cert.pem)"  
+msgstr "证书路径 (例如，/etc/nginx/ssl/cert.pem)"  
+
+msgid "Enter the full path to the SSL certificate file"  
+msgstr "输入 SSL 证书文件的完整路径"  
+
+msgid "Private Key Path (e.g., /etc/nginx/ssl/key.pem)"  
+msgstr "私钥路径 (例如，/etc/nginx/ssl/key.pem)"  
+
+msgid "Enter the full path to the SSL private key file"  
+msgstr "输入 SSL 私钥文件的完整路径"  
+
+msgid "ACME Automatic Certificate Management"  
+msgstr "ACME 自动证书管理"  
+
+msgid "Enable ACME"  
+msgstr "启用 ACME"  
+
+msgid "Email Address (for certificate requests)"  
+msgstr "电子邮件地址 (用于证书请求)"  
+
+msgid "Enter the email address for ACME certificate requests"  
+msgstr "输入 ACME 证书请求的电子邮件地址"  
+
+msgid "Run ACME"  
+msgstr "运行 ACME"  
+
+msgid "ACME certificate request successful. Certificates saved to %s and %s."  
+msgstr "ACME
