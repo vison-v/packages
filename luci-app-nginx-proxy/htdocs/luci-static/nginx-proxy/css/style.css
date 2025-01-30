@@ -46,6 +46,15 @@
 
 /* 响应式布局 */
 @media (max-width: 768px) {
+    .cbi-section-table td {
+        padding: 8px 5px !important;
+    }
+   
+    .cbi-button {
+        margin-top: 5px;
+        width: 100%;
+    }
+    
     .advanced-options {
         padding: 15px;
     }
