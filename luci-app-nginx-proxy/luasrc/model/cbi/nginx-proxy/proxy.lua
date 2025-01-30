@@ -19,7 +19,7 @@ domain.rmempty = false
 domain.description = translate("Enter full domain (e.g. example.com or sub.example.com)")
 function domain.validate(self, value)
     -- RFC 1034合规验证
-    if not value:match("^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]%.[a-zA-Z]{2,}$") then
+    if not value:match("^[a-zA-Z0-9\\u4e00-\\u9fa5][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]%.[a-zA-Z]{2,}$") then
         return nil, translate("Invalid domain format (e.g. example.com)")
     end
     -- 通配符验证

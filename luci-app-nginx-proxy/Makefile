@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=Nginx Reverse Proxy Manager
-LUCI_DEPENDS:=+nginx-ssl +acme +luci-lib-ipkg +luci-compat +curl +socat +cron
+LUCI_DEPENDS:=+nginx-ssl +acme +luci-lib-ipkg +luci-compat +curl +socat
 PKG_NAME:=luci-app-nginx-proxy
 PKG_VERSION:=2.0
 PKG_RELEASE:=1

@@ -16,8 +16,6 @@ function index()
     
     entry({"admin", "services", "nginx-proxy", "apply"}, call("action_apply")).leaf = true
     entry({"admin", "services", "nginx-proxy", "clearlogs"}, call("action_clearlogs"))
-    entry({"admin", "services", "nginx-proxy", "add_cron"}, post("action_add_cron"))
-    entry({"admin", "services", "nginx-proxy", "del_cron"}, post("action_del_cron"))
     entry({"admin", "services", "nginx-proxy", "downloadlogs"}, call("action_downloadlogs"))
     entry({"admin", "services", "nginx-proxy", "acme", "logs"}, call("action_logs"))
     entry({"admin", "services", "nginx-proxy", "acme", "revoke"}, post("action_revoke"))
@@ -209,46 +207,6 @@ function action_clearlogs()
     else
         http.status(404, "Log file not found")
     end
-end
-
-function action_add_cron()
-    local cron = http.formvalue("cron")
-    local command = http.formvalue("command")
-    
-    if cron and command then
-        local cron_file = "/etc/crontabs/root"
-        local entry = string.format("%s %s", cron, command)
-        local content = fs.readfile(cron_file) or ""
-        
-        if not content:find(entry, 1, true) then
-            content = content .. "\n" .. entry
-            if fs.writefile(cron_file, content) then
-                sys.call("/etc/init.d/cron restart >/dev/null 2>&1")
-            end
-        end
-    end
-    http.redirect(http.build_url("admin/services/nginx-proxy/schedules"))
-end
-
-function action_del_cron()
-    local line_num = tonumber(http.formvalue("line"))
-    if line_num then
-        local cron_file = "/etc/crontabs/root"
-        local lines = {}
-        local current = 1
-        
-        for line in io.lines(cron_file) do
-            if current ~= line_num then
-                table.insert(lines, line)
-            end
-            current = current + 1
-        end
-        
-        if fs.writefile(cron_file, table.concat(lines, "\n")) then
-            sys.call("/etc/init.d/cron restart >/dev/null 2>&1")
-        end
-    end
-    http.redirect(http.build_url("admin/services/nginx-proxy/schedules"))
 end
 
 function action_downloadlogs()
