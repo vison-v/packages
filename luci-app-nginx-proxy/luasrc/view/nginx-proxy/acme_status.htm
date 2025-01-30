@@ -1,0 +1,25 @@
+<%+header%>
+<div class="cbi-value">
+    <label class="cbi-value-title"><%:Current Status%></label>
+    <div class="cbi-value-field">
+        <% if cert_status then %>
+            <div class="cert-status">
+                <div class="status-item">
+                    <span class="label"><%:Expiry Date%>:</span>
+                    <span class="value"><%=cert_status.expire%></span>
+                </div>
+                <div class="status-item">
+                    <span class="label"><%:Last Renewal%>:</span>
+                    <span class="value"><%=cert_status.renew%></span>
+                </div>
+                <div class="status-item">
+                    <span class="label"><%:Next Check%>:</span>
+                    <span class="value"><%=cert_status.next%></span>
+                </div>
+            </div>
+        <% else %>
+            <em><%:No valid certificate found%></em>
+        <% end %>
+    </div>
+</div>
+<%+footer%>
