@@ -256,3 +256,11 @@ msgstr "续期证书"
 
 msgid "Rotate Logs"
 msgstr "轮转日志"
+
+#: applications/luci-app-nginx-proxy/luasrc/view/nginx-proxy/ssl_adv_options.htm:5
+msgid "Advanced SSL Options"
+msgstr "高级SSL选项"
+
+#: applications/luci-app-nginx-proxy/luasrc/view/nginx-proxy/acme_status.htm:15
+msgid "Certificate Details"
+msgstr "证书详情"

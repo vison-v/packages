@@ -208,21 +208,9 @@ end
 -- 增强定时任务管理 ----------------------------------------------------------
 function m.on_commit(self)
     if uci:get_bool("nginx-proxy", "acme", "enabled") then
-        -- 使用LuCI定时任务管理
-        local cron = uci:get_all("cron", "acme_renew") or {}
-        cron.command = build_acme_cmd().." --cron"
-        cron.minute = "0"
-        cron.hour = "3"
-        cron.day = "*"
-        cron.month = "*"
-        cron.weekday = "*"
-        
-        uci:section("cron", "cron", "acme_renew", cron)
-        uci:commit("cron")
-        sys.call("/etc/init.d/cron restart")
+        os.execute("cru a ACME_Renew '0 3 * * * /usr/libexec/nginx-proxy/renew-certs'")
     else
-        uci:delete("cron", "acme_renew")
-        uci:commit("cron")
+        os.execute("cru d ACME_Renew")
     end
 end
 
