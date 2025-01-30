@@ -1,0 +1,11 @@
+#!/bin/sh
+# 创建必要目录
+mkdir -p /etc/nginx/ssl /var/www/acme
+chmod 700 /etc/nginx/ssl
+chown www-data:www-data /var/www/acme
+
+# 设置默认日志权限
+touch /var/log/nginx/proxy.log
+chown www-data:adm /var/log/nginx/proxy.log
+
+exit 0
