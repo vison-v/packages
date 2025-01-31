@@ -60,7 +60,24 @@ function generate_config()
         "    include /etc/nginx/conf.d/*.conf;",
         ""
     }
+  local function configure_firewall(port, proto)
+    local firewall_type = sys.exec("uci get firewall.@defaults[0].flowtable 2>/dev/null | grep -q nft && echo nft || echo ipt")
+    local cmd
+    if firewall_type == "nft" then
+      cmd = string.format("nft add rule inet fw4 input %s dport %d accept", proto, port)
+    else
+      cmd = string.format("iptables -I INPUT -p %s --dport %d -j ACCEPT", proto, port)
+    end
+    sys.call(cmd .. " 2>/dev/null")
+  end
 
+  -- 在生成每个server块时调用
+  uci:foreach("nginx-proxy", "proxy", function(section)
+    if section.port then
+      configure_firewall(section.port, "tcp")
+    end
+  end)
+end
     -- 处理全局SSL配置
     local ssl_enabled = uci:get("nginx-proxy", "ssl", "enabled") or "0"
     if ssl_enabled == "1" then
