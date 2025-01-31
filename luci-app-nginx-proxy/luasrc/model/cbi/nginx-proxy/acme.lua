@@ -10,7 +10,7 @@ m = Map("nginx-proxy", translate("ACME Automation"),
 
 -- 添加版本控制头
 m.on_init = function(self)
-    http.headers["X-ACME-Config-Version"] = "2.2"
+    http.header("X-ACME-Config-Version", "2.2")
 end
 
 s = m:section(NamedSection, "acme", "acme", translate("ACME Settings"))
@@ -141,7 +141,7 @@ local function build_acme_cmd()
         "ACME_OPTS='",
         "--server "..uci:get("nginx-proxy", "acme", "server"),
         "--email "..uci:get("nginx-proxy", "acme", "email"),
-        "--keylength ec-384",  # 使用ECC证书
+        "--keylength ec-384",  -- 使用ECC证书
         "--force"
     }
     
@@ -167,7 +167,7 @@ local function build_acme_cmd()
             fs.chmod(cred_file, 600)
             
             cmd[#cmd+1] = string.format("--%s-credentials %s", provider, cred_file)
-            cmd[#cmd+1] = "--cleanup"  # 自动删除临时凭证
+            cmd[#cmd+1] = "--cleanup"  -- 自动删除临时凭证
         end
     end
     
@@ -208,9 +208,21 @@ end
 -- 增强定时任务管理 ----------------------------------------------------------
 function m.on_commit(self)
     if uci:get_bool("nginx-proxy", "acme", "enabled") then
-        os.execute("cru a ACME_Renew '0 3 * * * /usr/libexec/nginx-proxy/renew-certs'")
+        -- 使用LuCI定时任务管理
+        local cron = uci:get_all("cron", "acme_renew") or {}
+        cron.command = build_acme_cmd().." --cron"
+        cron.minute = "0"
+        cron.hour = "3"
+        cron.day = "*"
+        cron.month = "*"
+        cron.weekday = "*"
+        
+        uci:section("cron", "cron", "acme_renew", cron)
+        uci:commit("cron")
+        sys.call("/etc/init.d/cron restart")
     else
-        os.execute("cru d ACME_Renew")
+        uci:delete("cron", "acme_renew")
+        uci:commit("cron")
     end
 end
 
